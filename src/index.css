@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 36 23% 98%;
+  --foreground: 11 6% 11%;
+  --primary: 11 6% 11%;
+  --card: 0 0% 100%;
+  --muted: 30 11% 93%;
+  --border: 20 8% 86%;
+  --radius: 9999px;
+  color-scheme: light;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; background: hsl(var(--background)); }
+button, input { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+::selection { background: #f3bad4; color: #191716; }
+
+.eyebrow {
+  font-size: .72rem;
+  font-weight: 750;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgb(0 0 0 / .43);
+}
+
+.gradient-frame {
+  background-image: linear-gradient(90deg, #84a9fa, #fb6fec, #fba69e, #fdd4a3, #fb6fec, #84a9fa);
+  background-size: 200% 100%;
+  background-position: 0 0;
+  transition: background-position .8s ease;
+}
+.gradient-frame:hover { background-position: 200% 0; }
+
+.accordion-trigger[data-state="open"] svg { transform: rotate(180deg); }
+.accordion-content[data-state="open"] { animation: slideDown .3s cubic-bezier(.87,0,.13,1); }
+.accordion-content[data-state="closed"] { animation: slideUp .25s cubic-bezier(.87,0,.13,1); }
+
+@keyframes slideDown { from { height: 0; opacity: 0; } to { height: var(--radix-accordion-content-height); opacity: 1; } }
+@keyframes slideUp { from { height: var(--radix-accordion-content-height); opacity: 1; } to { height: 0; opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
