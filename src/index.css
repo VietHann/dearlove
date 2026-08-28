@@ -3,13 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --background: 36 23% 98%;
-  --foreground: 11 6% 11%;
-  --primary: 11 6% 11%;
+  /* Brand: Dearlove (Vietnamese Wedding Gold) */
+  --background: 44 50% 97%;
+  --foreground: 0 60% 25%;
+  --primary: 39 67% 55%;
+  --primary-foreground: 0 0% 100%;
   --card: 0 0% 100%;
-  --muted: 30 11% 93%;
-  --border: 20 8% 86%;
+  --muted: 39 40% 93%;
+  --border: 39 30% 86%;
   --radius: 9999px;
+
+  /* Custom palette */
+  --color-viet-gold: #d9a441;
+  --color-viet-gold-soft: #e0a422;
+  --color-viet-gold-bright: #f7c948;
+  --color-viet-red: #8d1216;
+  --color-viet-red-soft: #b91c1c;
+  --color-viet-brown: #7c3f06;
+  --color-viet-cream: #fcfbf8;
+  --color-viet-blush: #fdf2e3;
+
   color-scheme: light;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
@@ -18,34 +31,825 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; min-width: 320px; background: hsl(var(--background)); }
+body {
+  margin: 0;
+  min-width: 320px;
+  background: hsl(var(--background));
+  background-image:
+    radial-gradient(circle at 15% 12%, rgba(247, 201, 72, .14) 0%, transparent 38%),
+    radial-gradient(circle at 88% 6%, rgba(217, 164, 65, .12) 0%, transparent 32%),
+    radial-gradient(circle at 50% 90%, rgba(141, 18, 22, .06) 0%, transparent 40%);
+  background-attachment: fixed;
+}
 button, input { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
-::selection { background: #f3bad4; color: #191716; }
+::selection { background: #f7c948; color: #7c3f06; }
+
+/* Hide scrollbar for horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Smooth shadow utilities */
+.shadow-soft { box-shadow: 0 8px 30px rgba(124, 63, 6, .08); }
 
 .eyebrow {
   font-size: .72rem;
   font-weight: 750;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: rgb(0 0 0 / .43);
+  color: #8d1216;
 }
 
+/* ============ Animated gradient button ============ */
 .gradient-frame {
-  background-image: linear-gradient(90deg, #84a9fa, #fb6fec, #fba69e, #fdd4a3, #fb6fec, #84a9fa);
-  background-size: 200% 100%;
+  position: relative;
+  background-image: linear-gradient(110deg, #d9a441, #f7c948, #e0a422, #f7c948, #d9a441, #8d1216);
+  background-size: 300% 100%;
   background-position: 0 0;
-  transition: background-position .8s ease;
+  transition: background-position .9s ease;
 }
-.gradient-frame:hover { background-position: 200% 0; }
+.gradient-frame:hover { background-position: 100% 0; }
+.gradient-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(110deg, #f7c948, transparent, #d9a441);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .4s;
+  pointer-events: none;
+}
+.gradient-frame:hover::before { opacity: 1; }
 
+/* ============ Accordion ============ */
 .accordion-trigger[data-state="open"] svg { transform: rotate(180deg); }
-.accordion-content[data-state="open"] { animation: slideDown .3s cubic-bezier(.87,0,.13,1); }
+.accordion-trigger svg { transition: transform .35s cubic-bezier(.87,0,.13,1); }
+.accordion-content[data-state="open"] { animation: slideDown .35s cubic-bezier(.87,0,.13,1); }
 .accordion-content[data-state="closed"] { animation: slideUp .25s cubic-bezier(.87,0,.13,1); }
 
-@keyframes slideDown { from { height: 0; opacity: 0; } to { height: var(--radix-accordion-content-height); opacity: 1; } }
+@keyframes slideDown { from { height: 0; opacity: 0; transform: translateY(-6px); } to { height: var(--radix-accordion-content-height); opacity: 1; transform: translateY(0); } }
 @keyframes slideUp { from { height: var(--radix-accordion-content-height); opacity: 1; } to { height: 0; opacity: 0; } }
 
+/* ============ Marquee ============ */
+@keyframes marquee {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+@keyframes marquee-reverse {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+.animate-marquee { animation: marquee 22s linear infinite; }
+.animate-marquee-reverse { animation: marquee-reverse 22s linear infinite; }
+
+/* ============ Floating elements ============ */
+@keyframes float-heart {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+.float-heart { animation: float-heart 3s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.float { animation: float 5s ease-in-out infinite; }
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-20px) translateX(8px); }
+}
+.float-slow { animation: float-slow 8s ease-in-out infinite; }
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 22s linear infinite; }
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.06); opacity: .9; }
+}
+.pulse-soft { animation: pulse-soft 2.4s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(110deg, transparent 0%, rgba(247, 201, 72, .35) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.6s linear infinite;
+}
+
+/* ============ Highlight text (gold gradient sweep) ============ */
+/* Chỉ là 1 inline span có gradient gold dịch chuyển — KHÔNG grid, KHÔNG absolute.
+   Layout heading hoàn toàn bình thường, không bao giờ vỡ. */
+.hl-text {
+  display: inline;
+  position: relative;
+  background-image: linear-gradient(110deg,
+    #d9a441 0%, #f7c948 25%, #e0a422 50%, #f7c948 75%, #d9a441 100%);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(124, 63, 6, .25));
+  animation: hl-shimmer 4s linear infinite;
+  white-space: nowrap;
+}
+@keyframes hl-shimmer {
+  0%   { background-position:   0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+
+.hl-underline {
+  display: inline-block;
+  width: 0.9em;
+  height: 4px;
+  margin-left: 0.18em;
+  margin-bottom: 0.12em;
+  vertical-align: middle;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, #d9a441 30%, #f7c948 50%, #d9a441 70%, transparent);
+  transform-origin: left center;
+  animation: hl-underline 3.6s cubic-bezier(.65,0,.35,1) infinite;
+}
+@keyframes hl-underline {
+  0%       { transform: scaleX(0); opacity: 0; }
+  10%      { transform: scaleX(1); opacity: 1; }
+  85%      { transform: scaleX(1); opacity: 1; }
+  100%     { transform: scaleX(0); opacity: 0; transform-origin: right center; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .hl-text, .hl-underline { animation: none; }
+  .hl-underline { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+.sparkle { animation: sparkle 2.2s ease-in-out infinite; }
+
+/* ============ Wedding divider ============ */
+.wedding-divider {
+  background-image: linear-gradient(90deg, transparent, #d9a441 20%, #f7c948 50%, #d9a441 80%, transparent);
+  height: 1px;
+}
+
+/* ============ Reveal on scroll ============ */
+/* Mặc định: HIỂN THỊ. JS sẽ thêm class .js-reveal để KHỞI ĐẦU ẩn,
+   sau đó thêm .is-visible để hiện ra khi scroll tới.
+   → Nếu JS lỗi, nội dung vẫn hiển thị bình thường. */
+.js-reveal { opacity: 0; transform: translateY(28px); }
+.js-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.js-reveal-left { opacity: 0; transform: translateX(-32px); }
+.js-reveal-left.is-visible { opacity: 1; transform: translateX(0); }
+.js-reveal-right { opacity: 0; transform: translateX(32px); }
+.js-reveal-right.is-visible { opacity: 1; transform: translateX(0); }
+.js-reveal-scale { opacity: 0; transform: scale(.92); }
+.js-reveal-scale.is-visible { opacity: 1; transform: scale(1); }
+
+.reveal,
+.reveal-left,
+.reveal-right,
+.reveal-scale {
+  transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+}
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+
+/* Legacy aliases (nếu JS không chạy thì opacity:1 bình thường) */
+.reveal { opacity: 1; transform: none; }
+.reveal-left { opacity: 1; transform: none; }
+.reveal-right { opacity: 1; transform: none; }
+.reveal-scale { opacity: 1; transform: none; }
+/* Khi JS active, dùng các class trên để ẩn cho đến khi visible */
+
+/* ============ Glow effects ============ */
+.glow-gold {
+  box-shadow: 0 0 0 0 rgba(217, 164, 65, .55);
+  animation: glow-pulse 2.4s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 164, 65, .55); }
+  50% { box-shadow: 0 0 0 14px rgba(217, 164, 65, 0); }
+}
+
+.glow-soft { box-shadow: 0 10px 40px -8px rgba(217, 164, 65, .35); }
+
+/* ============ Card lift on hover ============ */
+.card-lift {
+  transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1);
+}
+.card-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px -10px rgba(124, 63, 6, .22);
+}
+
+/* ============ Underline link ============ */
+.underline-grow {
+  position: relative;
+  display: inline-block;
+}
+.underline-grow::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, #d9a441, #f7c948);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .4s cubic-bezier(.87,0,.13,1);
+}
+.underline-grow:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ============ Petal / confetti float ============ */
+@keyframes drift {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+.drift { animation: drift linear infinite; }
+
+/* ============================================================
+   Templates Section - Design Tokens
+   ============================================================ */
+:root {
+  /* Viet theme (additional) */
+  --color-viet-gold: #d9a441;
+  --color-viet-gold-light: #f2c86b;
+  --color-viet-cream: #fdf3e3;
+  --color-viet-red: #a4161a;
+  --color-viet-maroon: #6e0f12;
+
+  /* FNB theme (additional) */
+  --color-fnb-amber: #ffb400;
+  --color-fnb-orange: #ff6b2c;
+  --color-fnb-red: #e8402a;
+  --color-fnb-green: #12a150;
+
+  /* Surface */
+  --color-surface: #fffaf2;
+  --color-on-surface: #2d2a4a;
+  --color-on-surface-variant: #6b7280;
+  --color-outline-variant: #e5e7eb;
+  --color-on-secondary-container: #7c4a2d;
+}
+
+/* ============================================================
+   Templates Section - Typography
+   ============================================================ */
+.font-lexend { font-family: 'Lexend', sans-serif; }
+.font-display { font-family: 'Playfair Display', serif; }
+.font-viet { font-family: 'Be Vietnam Pro', sans-serif; }
+
+/* ============================================================
+   Templates Section - Section Layout
+   ============================================================ */
+.templates-section {
+  position: relative;
+  padding: 6rem 0;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+/* ============================================================
+   Templates Section - Badge
+   ============================================================ */
+.badge-viet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: rgba(164, 22, 26, 0.08);
+  color: var(--color-viet-red);
+  border: 1px solid rgba(164, 22, 26, 0.20);
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  margin-bottom: 1.25rem;
+}
+.badge-viet svg { width: 0.875rem; height: 0.875rem; }
+
+/* ============================================================
+   Templates Section - Filter Buttons
+   ============================================================ */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.filter-btn {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 1px solid var(--color-outline-variant);
+  background: #fff;
+  color: var(--color-on-surface-variant);
+  transition: all 0.2s ease;
+}
+.filter-btn:hover {
+  border-color: var(--color-viet-gold);
+  color: var(--color-viet-red);
+}
+.filter-btn.active {
+  background-image: linear-gradient(to right, var(--color-viet-red), var(--color-fnb-orange));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 6px -1px rgba(164, 22, 26, 0.30);
+  transform: scale(1.05);
+}
+
+/* ============================================================
+   Templates Section - 3D Carousel
+   ============================================================ */
+.carousel-3d-wrap {
+  perspective: 1200px;
+  transform: rotateX(6deg);
+}
+.carousel-3d {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .carousel-3d { height: 460px; }
+}
+.carousel-3d__stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+  z-index: 10;
+}
+.carousel-3d__slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 240px;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease, filter 0.45s ease;
+}
+@media (min-width: 640px) {
+  .carousel-3d__slide { width: 300px; }
+}
+
+/* ============================================================
+   Templates Section - Template Card
+   ============================================================ */
+.tmpl-card {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  outline: none;
+  font: inherit;
+}
+.tmpl-card__frame {
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 25px 50px -12px rgba(164, 22, 26, 0.30);
+  outline: 2px solid rgba(217, 164, 65, 0.45);
+  outline-offset: -2px;
+}
+.tmpl-card__topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 0.875rem;
+  background-image: linear-gradient(to right, var(--color-viet-maroon), var(--color-viet-red));
+  border-bottom: 2px solid rgba(217, 164, 65, 0.60);
+}
+.dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+.dot--gold { background: var(--color-viet-gold); }
+.dot--orange { background: var(--color-fnb-orange); }
+.dot--cream { background: var(--color-viet-cream); }
+.tmpl-url {
+  margin-left: 0.5rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: rgba(253, 243, 227, 0.90);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+}
+.tmpl-card__screen {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .tmpl-card__screen { height: 320px; }
+}
+.tmpl-card__screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tmpl-card__screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to top, rgba(164, 22, 26, 0.35), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.tmpl-card:hover .tmpl-card__screen::after { opacity: 1; }
+.tmpl-card__hover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1.25rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.tmpl-card:hover .tmpl-card__hover { opacity: 1; }
+.tmpl-card__hover-btn {
+  background: var(--color-viet-cream);
+  color: var(--color-viet-red);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+.tmpl-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background-image: linear-gradient(to right, var(--color-viet-red), var(--color-fnb-orange));
+  color: #fff;
+  font-size: 10px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgba(164, 22, 26, 0.40);
+  z-index: 2;
+}
+.tmpl-card__footer {
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: #fff;
+}
+.tmpl-card__name {
+  font-family: 'Lexend', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tmpl-card__category {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  color: var(--color-on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tmpl-card__price {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+}
+.tmpl-card__price--free {
+  background: rgba(18, 161, 80, 0.10);
+  color: var(--color-fnb-green);
+}
+.tmpl-card__price--paid {
+  background: rgba(217, 164, 65, 0.20);
+  color: var(--color-on-secondary-container);
+}
+
+/* ============================================================
+   Templates Section - Decorative
+   ============================================================ */
+.deco-cloud {
+  position: absolute;
+  top: 6rem;
+  left: 3%;
+  width: 11rem;
+  pointer-events: none;
+  opacity: 0.25;
+}
+@media (max-width: 1023px) { .deco-cloud { display: none; } }
+.deco-flower {
+  position: absolute;
+  top: 2rem;
+  right: 1%;
+  width: 240px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+@media (min-width: 1024px) { .deco-flower { width: 300px; } }
+@media (max-width: 767px) { .deco-flower { display: none; } }
+
+/* ============================================================
+   Templates Section - View All Link
+   ============================================================ */
+.view-all {
+  text-align: center;
+  margin-top: 2rem;
+}
+.view-all a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-viet-red);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.view-all a:hover { color: var(--color-fnb-orange); }
+.view-all svg { width: 1rem; height: 1rem; }
+
+/* ============================================================
+   Templates Section - Navigation Buttons
+   ============================================================ */
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(6px);
+  color: var(--color-viet-red);
+  border: 1px solid rgba(217, 164, 65, 0.50);
+  box-shadow: 0 10px 15px -3px rgba(164, 22, 26, 0.20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.carousel-nav:hover {
+  background: var(--color-viet-red);
+  color: var(--color-viet-cream);
+  transform: translateY(-50%) scale(1.10);
+}
+.carousel-nav svg { width: 1.25rem; height: 1.25rem; }
+.carousel-nav--prev { left: 0.5rem; }
+.carousel-nav--next { right: 0.5rem; }
+@media (min-width: 640px) {
+  .carousel-nav--prev { left: 2rem; }
+  .carousel-nav--next { right: 2rem; }
+}
+
+/* ============================================================
+   Templates Section - Dots Navigation
+   ============================================================ */
+.dots-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.375rem;
+  max-width: 28rem;
+  margin: 1rem auto 0;
+  padding: 0 1rem;
+}
+.dot-btn {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  border: none;
+  background: var(--color-outline-variant);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
+}
+.dot-btn:hover { background: rgba(217, 164, 65, 0.60); }
+.dot-btn.active {
+  width: 1.75rem;
+  background-image: linear-gradient(to right, var(--color-viet-gold), var(--color-viet-red));
+}
+
+/* ============================================================
+   Templates Section - Floating Animation
+   ============================================================ */
+@keyframes floating {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.floating { animation: floating 4s ease-in-out infinite; }
+
+/* ============================================================
+   Templates Section - Gradient Text
+   ============================================================ */
+.text-gradient-viet {
+  background-image: linear-gradient(to right, var(--color-viet-red), var(--color-fnb-orange), var(--color-viet-gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ============ Reduced motion ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1;
+    transform: none;
+  }
+  .floating { animation: none; }
+}
+
+/* ============ Text balance fallback (Safari < 17.5) ============ */
+.text-balance { text-wrap: balance; }
+.text-pretty  { text-wrap: pretty; }
+
+/* ============================================================
+   Problem Section - Cursive red highlight for "100+"
+   ============================================================ */
+.problem-script {
+  font-family: 'Brush Script MT', 'Lucida Handwriting', 'Snell Roundhand', cursive;
+  font-style: italic;
+  font-weight: 700;
+  color: #d92d30;
+  display: inline-block;
+  transform: rotate(-6deg) translateY(-0.05em);
+  padding: 0 0.05em;
+  font-size: 1.18em;
+  line-height: 1;
+  text-shadow: 1px 1px 0 rgba(141, 18, 22, .08);
+  background-image: linear-gradient(135deg, #ef4444 0%, #d92d30 45%, #8d1216 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Problem card */
+.problem-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 12px 28px -6px rgba(124, 63, 6, 0.12),
+              0 4px 10px -2px rgba(124, 63, 6, 0.06);
+  transition: transform .25s cubic-bezier(.16, 1, .3, 1),
+              box-shadow .25s cubic-bezier(.16, 1, .3, 1);
+  will-change: transform;
+}
+.problem-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 20px 40px -8px rgba(229, 65, 83, 0.22),
+              0 8px 16px -4px rgba(124, 63, 6, 0.08);
+}
+.problem-card__icon {
+  display: grid;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, #fde8a8 0%, #f9d375 55%, #f3c14b 100%);
+  color: #b45309;
+  box-shadow: inset 0 -8px 18px rgba(180, 83, 9, 0.18),
+              0 6px 14px -4px rgba(243, 193, 75, 0.45);
+}
+
+@keyframes problems-card-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.problem-card {
+  animation: problems-card-in .6s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.problems-cards-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 1rem;
+  margin: 0.5rem auto 0;
+  max-width: 64rem;
+  scrollbar-width: none;
+}
+.problems-cards-scroll::-webkit-scrollbar { display: none; }
+.problems-cards-scroll > .problem-card {
+  flex: 0 0 78%;
+  scroll-snap-align: center;
+}
+
+@media (min-width: 768px) {
+  .problems-cards-scroll { display: none; }
+}
+
+@keyframes problems-heading-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.problems-heading-pc,
+.problems-heading-mobile {
+  animation: problems-heading-in .7s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.font-signature {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.font-heading {
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+.problems-icon {
+  width: 5rem;
+  height: auto;
+  flex-shrink: 0;
+}
+.problems-icon-mobile {
+  width: 4.5rem;
+  height: auto;
+  margin-top: 0.5rem;
+}
+
+/* The arrow belongs to the invitation line, keeping it below the first heading. */
+.problems-invitation-line {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 0.625rem;
+}
+.problems-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 2.5rem;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
