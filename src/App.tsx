@@ -1,51 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import * as Accordion from '@radix-ui/react-accordion'
 import {
   ArrowRight, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight,
-  Facebook, Instagram, Linkedin, Menu, Send, Sparkles, Star, UserRound, X, Youtube,
+  Facebook, Instagram, Linkedin, Menu, Send, Sparkles, UserRound, X, Youtube,
   Gift, Camera, Music, Heart, PartyPopper, Cake, GraduationCap, Baby, Briefcase,
   MessageCircleHeart, Mail, Bell, Wand2, LayoutTemplate, Clock, MessageCircle, Users,
 } from 'lucide-react'
-import TemplatesSection from './TemplatesSection'
-
-function useRevealAll() {
-  useEffect(() => {
-    // Đánh dấu rằng JS đã sẵn sàng, kích hoạt hiệu ứng ẩn cho mọi phần tử
-    document.documentElement.classList.add('js-ready')
-
-    const targets = document.querySelectorAll<HTMLElement>(
-      '.js-reveal, .js-reveal-left, .js-reveal-right, .js-reveal-scale'
-    )
-    if (targets.length === 0) return
-
-    // Phần tử nào đã nằm trong viewport lúc mount → hiện ngay lập tức
-    const vh = window.innerHeight
-    targets.forEach((el) => {
-      const rect = el.getBoundingClientRect()
-      if (rect.top < vh && rect.bottom > 0) {
-        el.classList.add('is-visible')
-      }
-    })
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible')
-            io.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
-    )
-
-    targets.forEach((el) => {
-      if (!el.classList.contains('is-visible')) io.observe(el)
-    })
-
-    return () => io.disconnect()
-  }, [])
-}
+import TemplatesSection from './sections/TemplatesSection'
+import WhyChooseSection from './sections/WhyChooseSection'
+import ImageStreamHeroSection from './sections/ImageStreamHeroSection'
+import { ParallaxPetals, ScrollReveal, StaggerContainer, AnimatedCounter } from './components'
 
 const IMAGES = {
   wedding: '/images/lifestyle.png',
@@ -57,28 +22,31 @@ const IMAGES = {
   gift3: '/images/clinical-product.png',
   gift4: '/images/supplements.png',
   logo: '/logo.png',
+  // Hero wedding gallery
+  hero1: '/images/wedding-1.jpg',
+  hero2: '/images/wedding-2.jpg',
+  hero3: '/images/wedding-3.jpg',
+  hero4: '/images/wedding-4.jpg',
+  hero5: '/images/wedding-5.jpg',
+  hero6: '/images/wedding-6.jpg',
 }
 
-const CATEGORIES = [
-  { id: 'wedding', name: 'Thiệp Cưới', icon: Heart, color: '#d9a441' },
-  { id: 'birthday', name: 'Sinh Nhật', icon: Cake, color: '#d9a441' },
-  { id: 'congrats', name: 'Chúc Mừng', icon: PartyPopper, color: '#d9a441' },
-  { id: 'festival', name: 'Lễ Tết', icon: Sparkles, color: '#d9a441' },
-  { id: 'graduate', name: 'Tốt Nghiệp', icon: GraduationCap, color: '#d9a441' },
-  { id: 'baby', name: 'Thai Sản', icon: Baby, color: '#d9a441' },
-  { id: 'career', name: 'Thăng Tiến', icon: Briefcase, color: '#d9a441' },
-  { id: 'love', name: 'Tình Yêu', icon: MessageCircleHeart, color: '#d9a441' },
-]
-
-const TEMPLATES = [
-  { id: 't1', category: 'wedding', title: 'Thiệp Cưới Hoàng Gia', price: '199k', tag: 'Bán chạy', image: IMAGES.wedding },
-  { id: 't2', category: 'birthday', title: 'Sinh Nhật Rực Rỡ', price: '89k', tag: 'Mới', image: IMAGES.birthday },
-  { id: 't3', category: 'congrats', title: 'Chúc Mừng Tân Gia', price: '99k', tag: 'Hot', image: IMAGES.congrats },
-  { id: 't4', category: 'festival', title: 'Tết Nguyên Đán', price: '129k', tag: 'Đặc biệt', image: IMAGES.festival },
-  { id: 't5', category: 'wedding', title: 'Cưới Hỏi Truyền Thống', price: '149k', tag: '', image: IMAGES.gift1 },
-  { id: 't6', category: 'birthday', title: 'Sinh Nhật Hoạt Hình', price: '69k', tag: 'Mới', image: IMAGES.gift2 },
-  { id: 't7', category: 'congrats', title: 'Chúc Mừng Khai Trương', price: '119k', tag: '', image: IMAGES.gift3 },
-  { id: 't8', category: 'festival', title: 'Trung Thu Đoàn Viên', price: '99k', tag: '', image: IMAGES.gift4 },
+const CATEGORIES: Array<{
+  id: string
+  name: string
+  icon: typeof Heart
+  from: string
+  to: string
+  shadow: string
+}> = [
+  { id: 'wedding',   name: 'Thiệp Cưới',   icon: Heart,             from: '#be123c', to: '#e0a422', shadow: 'rgba(190, 18, 60, 0.45)'  },
+  { id: 'birthday',  name: 'Sinh Nhật',    icon: Cake,              from: '#f59e0b', to: '#ea580c', shadow: 'rgba(234, 88, 12, 0.45)'  },
+  { id: 'congrats',  name: 'Chúc Mừng',    icon: PartyPopper,       from: '#a855f7', to: '#db2777', shadow: 'rgba(219, 39, 119, 0.45)' },
+  { id: 'festival',  name: 'Lễ Tết',       icon: Sparkles,          from: '#dc2626', to: '#f59e0b', shadow: 'rgba(220, 38, 38, 0.45)'  },
+  { id: 'graduate',  name: 'Tốt Nghiệp',   icon: GraduationCap,     from: '#4f46e5', to: '#7c3aed', shadow: 'rgba(124, 58, 237, 0.45)' },
+  { id: 'baby',      name: 'Thai Sản',     icon: Baby,              from: '#f472b6', to: '#ec4899', shadow: 'rgba(236, 72, 153, 0.45)' },
+  { id: 'career',    name: 'Thăng Tiến',   icon: Briefcase,         from: '#10b981', to: '#047857', shadow: 'rgba(4, 120, 87, 0.45)'   },
+  { id: 'love',      name: 'Tình Yêu',     icon: MessageCircleHeart,from: '#ec4899', to: '#be185d', shadow: 'rgba(190, 24, 93, 0.45)'  },
 ]
 
 const FEATURED = [
@@ -96,11 +64,11 @@ const faqs = [
   ['Có chính sách hoàn tiền không?', 'Có. Nếu không hài lòng với mẫu thiệp, bạn có thể yêu cầu hoàn tiền trong vòng 7 ngày.'],
 ]
 
-const BLOG_POSTS = [
-  ['Mẹo thiết kế', '10 mẹo tạo thiệp cưới đẹp và ấn tượng', IMAGES.wedding],
-  ['Xu hướng 2026', 'Những xu hướng thiệp mời hot nhất năm 2026', IMAGES.birthday],
-  ['Hướng dẫn', 'Cách tạo thiệp sinh nhật độc đáo trong 5 phút', IMAGES.congrats],
-  ['Cảm hứng', 'Ý tưởng thiệp Tết handmade đầy ý nghĩa', IMAGES.festival],
+const BLOG_POSTS: Array<[string, string, string, string]> = [
+  ['Mẹo thiết kế', '10 mẹo tạo thiệp cưới đẹp và ấn tượng', 'Chọn tone màu, font chữ, bố cục và những chi tiết nhỏ giúp thiệp cưới của bạn thật sự nổi bật và giàu cảm xúc.', IMAGES.wedding],
+  ['Xu hướng 2026', 'Những xu hướng thiệp mời hot nhất năm 2026', 'Cập nhật phong cách thiết kế, hiệu ứng động và chất liệu được yêu thích nhất trong năm nay.', IMAGES.birthday],
+  ['Hướng dẫn', 'Cách tạo thiệp sinh nhật độc đáo trong 5 phút', 'Bốn bước đơn giản từ chọn mẫu, cá nhân hoá nội dung đến gửi thiệp đến bạn bè, người thân.', IMAGES.congrats],
+  ['Cảm hứng', 'Ý tưởng thiệp Tết handmade đầy ý nghĩa', 'Gợi ý những ý tưởng làm thiệp Tết thủ công tinh tế, gửi gắm lời chúc ấm áp đến người thân yêu.', IMAGES.festival],
 ]
 
 function GradientButton({ children, className = '', href = '#templates' }: { children: React.ReactNode; className?: string; href?: string }) {
@@ -136,21 +104,57 @@ function App() {
   const [menu, setMenu] = useState(false)
   const [slide, setSlide] = useState(0)
   const [activeCategory, setActiveCategory] = useState('all')
+  const [scrolled, setScrolled] = useState(false)
   const next = (n: number) => setSlide((s) => (s + n + FEATURED.length) % FEATURED.length)
 
-  useRevealAll()
+  useEffect(() => {
+    // Signal JS is ready so legacy CSS classes can hide elements
+    document.documentElement.classList.add('js-ready')
+    return () => document.documentElement.classList.remove('js-ready')
+  }, [])
 
-  const filteredTemplates = activeCategory === 'all'
-    ? TEMPLATES
-    : TEMPLATES.filter(t => t.category === activeCategory)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <div className="min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="min-h-screen overflow-x-clip bg-background text-foreground">
       {/* HEADER */}
-      <header className="sticky top-0 z-50 border-b border-[#d9a441]/20 bg-[#fcfbf8]/90 backdrop-blur-xl">
-        <nav className="mx-auto flex h-[88px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
+      <header
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? 'bg-transparent'
+            : 'border-b border-[#d9a441]/20 bg-[#fcfbf8]/90 backdrop-blur-xl'
+        }`}
+      >
+        <motion.nav
+          layout
+          animate={{
+            maxWidth: scrolled ? 1180 : 1440,
+            height: scrolled ? 64 : 88,
+            marginTop: scrolled ? 12 : 0,
+            marginBottom: scrolled ? 12 : 0,
+            borderRadius: scrolled ? 9999 : 0,
+          }}
+          transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+          className={`pointer-events-auto mx-auto flex items-center justify-between px-5 sm:px-8 lg:px-12 ${
+            scrolled
+              ? 'border border-[#d9a441]/25 bg-[#fcfbf8]/95 shadow-lg shadow-[#8d1216]/5 backdrop-blur-xl'
+              : ''
+          }`}
+        >
           <a className="group flex items-center" href="#">
-            <img src={IMAGES.logo} alt="Dearlove - Digital Invites" style={{height: '64px', width: 'auto'}} className="object-contain" />
+            <motion.img
+              src={IMAGES.logo}
+              alt="Dearlove - Digital Invites"
+              animate={{ height: scrolled ? 44 : 64 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              style={{ width: 'auto' }}
+              className="object-contain"
+            />
           </a>
           <div className="hidden items-center gap-7 lg:flex">
             {['Mẫu Thiệp','Danh Mục','Giá Cả','Câu Chuyện','Blog','Hỗ Trợ'].map(x => (
@@ -164,50 +168,34 @@ function App() {
               {menu ? <X size={20}/> : <Menu size={20}/>}
             </button>
           </div>
-        </nav>
-        {menu && (
-          <div className="border-t border-[#d9a441]/20 bg-[#fcfbf8] px-5 py-5 lg:hidden">
-            <div className="grid gap-1">
-              {['Mẫu Thiệp','Danh Mục','Giá Cả','Câu Chuyện','Blog','Hỗ Trợ'].map(x => (
-                <a className="rounded-xl px-3 py-3 font-medium text-[#7c3f06] transition-colors hover:bg-[#fdf2e3]" href="#templates" key={x}>{x}</a>
-              ))}
-            </div>
-          </div>
-        )}
+        </motion.nav>
+        <AnimatePresence>
+          {menu && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="border-t border-[#d9a441]/20 bg-[#fcfbf8] px-5 py-5 lg:hidden"
+            >
+              <div className="grid gap-1">
+                {['Mẫu Thiệp','Danh Mục','Giá Cả','Câu Chuyện','Blog','Hỗ Trợ'].map(x => (
+                  <a className="rounded-xl px-3 py-3 font-medium text-[#7c3f06] transition-colors hover:bg-[#fdf2e3]" href="#templates" key={x}>{x}</a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <main className="relative">
-        {/* Floating petals background */}
-        <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
-          {[
-            { left: '6%', size: 14, delay: '0s', duration: '18s', color: '#d9a441' },
-            { left: '22%', size: 10, delay: '4s', duration: '22s', color: '#f7c948' },
-            { left: '45%', size: 16, delay: '2s', duration: '20s', color: '#d9a441' },
-            { left: '68%', size: 12, delay: '7s', duration: '24s', color: '#8d1216' },
-            { left: '84%', size: 14, delay: '3s', duration: '19s', color: '#e0a422' },
-            { left: '92%', size: 10, delay: '9s', duration: '21s', color: '#f7c948' },
-          ].map((p, i) => (
-            <span
-              key={i}
-              className="drift absolute -top-10 block opacity-70"
-              style={{
-                left: p.left,
-                width: p.size,
-                height: p.size,
-                background: p.color,
-                borderRadius: '60% 40% 60% 40%',
-                animationDelay: p.delay,
-                animationDuration: p.duration,
-                filter: 'blur(.3px)',
-              }}
-            />
-          ))}
-        </div>
+        {/* Parallax floating petals — driven by Framer Motion + Lenis */}
+        <ParallaxPetals />
 
         {/* HERO */}
         <section className="relative z-10 mx-auto grid min-h-[780px] max-w-[1440px] lg:grid-cols-[1fr_1fr]">
-          <div className="flex flex-col justify-center px-5 py-20 sm:px-8 lg:px-14">
-            <div className="js-reveal-left mb-8 flex w-fit items-center gap-2 rounded-full border border-[#d9a441]/30 bg-white py-2 pl-2 pr-4 text-xs font-semibold text-[#7c3f06] shadow-soft sm:text-sm">
+          <div className="flex flex-col justify-center px-5 pt-8 pb-20 sm:px-8 lg:px-14">
+            <ScrollReveal direction="left" delay={0.05} className="mb-8 flex w-fit items-center gap-2 rounded-full border border-[#d9a441]/30 bg-white py-2 pl-2 pr-4 text-xs font-semibold text-[#7c3f06] shadow-soft sm:text-sm">
               <span className="relative grid size-7 place-items-center rounded-full bg-[#d9a441] text-white">
                 <Sparkles size={14} fill="currentColor" />
                 <span className="absolute inset-0 rounded-full bg-[#d9a441] pulse-soft" />
@@ -215,37 +203,48 @@ function App() {
               <span>Hơn 500+ mẫu thiệp đẹp mắt</span>
               <span className="text-[#d9a441]/60">•</span>
               <span className="text-[#7c3f06]/70">4.9 ★ từ 12.000+ khách hàng</span>
-            </div>
-            <p className="js-reveal-left reveal-delay-1 mb-5 text-xs font-bold uppercase tracking-[.22em] text-[#8d1216]">✨ Nền tảng thiệp trực tuyến hàng đầu</p>
-            <h1 className="js-reveal-left reveal-delay-2 relative max-w-xl text-[2.8rem] font-semibold leading-[1.05] tracking-[-.055em] text-[#8d1216] text-balance sm:text-6xl lg:text-[4.1rem]">
-              <span>Tạo thiệp </span>
-              <span className="hl-text">đẹp</span>
-              <span> cho mọi dịp ý nghĩa</span>
-              <span className="sparkle absolute right-2 top-2 text-[#f7c948] sm:right-4 sm:top-3"><Sparkles size={22} fill="currentColor" /></span>
-            </h1>
-            <p className="js-reveal-left reveal-delay-3 mt-6 max-w-md text-lg leading-8 text-[#7c3f06]/80 text-balance">
-              Thiệp cưới, sinh nhật, chúc mừng, lễ Tết — tùy chỉnh dễ dàng, gửi nhanh chóng, lưu giữ kỷ niệm trọn đời.
-            </p>
-            <div className="js-reveal-left reveal-delay-4 my-10 grid gap-5">
-              {[
-                {icon: Wand2, text: 'Hơn 500 mẫu thiệp đẹp mắt cho mọi dịp'},
-                {icon: LayoutTemplate, text: 'Tùy chỉnh dễ dàng — Không cần kỹ năng thiết kế'},
-                {icon: Bell, text: 'Gửi thiệp qua link, email, Zalo trong 60 giây'}
-              ].map(({icon: Icon, text}, i) => (
-                <div className="flex items-center gap-4 text-[15px] font-medium text-[#7c3f06]" key={text} style={{ transitionDelay: `${.4 + i * .1}s` }}>
-                  <span className="grid size-10 place-items-center rounded-full bg-[#fdf2e3] text-[#d9a441] transition-transform hover:scale-110 hover:bg-[#d9a441] hover:text-white">
-                    <Icon size={19}/>
-                  </span>
-                  {text}
-                </div>
-              ))}
-            </div>
+            </ScrollReveal>
+            <ScrollReveal direction="left" delay={0.25} distance={28}>
+              <h1 className="relative max-w-xl py-2 pb-3 text-[2.8rem] font-semibold leading-[1.5] tracking-[-.055em] text-balance text-[#8d1216] sm:text-6xl sm:leading-[1.45] lg:text-[3.85rem] lg:leading-[1.45]">
+                <span className="font-display italic">Tạo thiệp</span>{' '}
+                <span className="font-display italic">đẹp</span>{' '}
+                <span className="font-display italic">cho</span>{' '}
+                <span className="highlight-gradient font-display italic">mọi dịp</span>{' '}
+                <span className="highlight-gradient font-display italic">ý nghĩa</span>
+                <span className="sparkle absolute right-2 top-2 text-[#f7c948] sm:right-4 sm:top-3"><Sparkles size={22} fill="currentColor" /></span>
+              </h1>
+            </ScrollReveal>
+            <ScrollReveal direction="left" delay={0.35} distance={28}>
+              <p className="mt-6 max-w-md text-lg leading-8 text-[#7c3f06]/80 text-balance">
+                <span className="font-display italic text-[#8d1216]">Thiệp cưới</span>,{' '}
+                <span className="font-display italic text-[#8d1216]">sinh nhật</span>,{' '}
+                <span className="font-display italic text-[#8d1216]">chúc mừng</span>,{' '}
+                <span className="font-display italic text-[#8d1216]">lễ Tết</span>
+                {' '}— tùy chỉnh dễ dàng, gửi nhanh chóng, lưu giữ kỷ niệm trọn đời.
+              </p>
+            </ScrollReveal>
+            <ScrollReveal direction="left" delay={0.45} distance={28}>
+              <div className="my-10 grid gap-5">
+                {[
+                  {icon: Wand2, text: 'Hơn 500 mẫu thiệp đẹp mắt cho mọi dịp'},
+                  {icon: LayoutTemplate, text: 'Tùy chỉnh dễ dàng — Không cần kỹ năng thiết kế'},
+                  {icon: Bell, text: 'Gửi thiệp qua link, email, Zalo trong 60 giây'}
+                ].map(({icon: Icon, text}, i) => (
+                  <div className="flex items-center gap-4 text-[15px] font-medium text-[#7c3f06]" key={text} style={{ transitionDelay: `${.4 + i * .1}s` }}>
+                    <span className="grid size-10 place-items-center rounded-full bg-[#fdf2e3] text-[#d9a441] transition-transform hover:scale-110 hover:bg-[#d9a441] hover:text-white">
+                      <Icon size={19}/>
+                    </span>
+                    {text}
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
           </div>
           <div className="relative hidden h-[780px] gap-4 overflow-hidden bg-[#fdf2e3] p-4 lg:grid lg:grid-cols-2">
             <div className="absolute inset-x-0 top-0 z-10 h-32 bg-gradient-to-b from-[#fdf2e3] to-transparent"/>
             <div className="absolute inset-x-0 bottom-0 z-10 h-32 bg-gradient-to-t from-[#fdf2e3] to-transparent"/>
-            <Marquee images={[IMAGES.wedding, IMAGES.birthday, IMAGES.congrats, IMAGES.festival]}/>
-            <Marquee images={[IMAGES.festival, IMAGES.congrats, IMAGES.birthday, IMAGES.wedding]} reverse/>
+            <Marquee images={[IMAGES.hero1, IMAGES.hero2, IMAGES.hero3, IMAGES.hero4]}/>
+            <Marquee images={[IMAGES.hero6, IMAGES.hero5, IMAGES.hero4, IMAGES.hero3]} reverse/>
             <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
               <div className="relative grid size-28 place-items-center rounded-full bg-[#fcfbf8] shadow-2xl glow-gold">
                 <Heart className="size-12 fill-[#d9a441] text-[#d9a441] pulse-soft" />
@@ -258,83 +257,58 @@ function App() {
         <ProblemsSection/>
 
         {/* DANH MỤC */}
-        <section className="js-reveal relative z-10 bg-white px-5 py-10 sm:px-8 lg:px-12">
-          <div className="mx-auto max-w-[1320px]">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-              {CATEGORIES.map((c, i) => (
-                <button
-                  key={c.id}
-                  onClick={() => setActiveCategory(activeCategory === c.id ? 'all' : c.id)}
-                  style={{ transitionDelay: `${i * .06}s` }}
-                  className={`js-reveal-scale group flex flex-col items-center gap-2 rounded-2xl border p-3 transition-all ${
-                    activeCategory === c.id
-                      ? 'border-[#d9a441] bg-[#fdf2e3] shadow-md glow-soft'
-                      : 'border-[#d9a441]/20 bg-white hover:-translate-y-1 hover:border-[#d9a441]/50 hover:shadow-md'
-                  }`}
-                >
-                  <c.icon className="size-7 text-[#d9a441] transition-transform group-hover:scale-110 group-hover:rotate-6" strokeWidth={1.5}/>
-                  <span className="text-center text-xs font-semibold text-[#8d1216] sm:text-sm">{c.name}</span>
-                </button>
-              ))}
+        <section className="relative z-10 overflow-hidden bg-white px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+          <span aria-hidden className="pointer-events-none absolute -top-10 left-1/2 size-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(247,201,72,0.18),transparent_70%)] blur-2xl" />
+          <ScrollReveal>
+            <div className="relative mx-auto max-w-[1320px]">
+              <div className="mb-10 flex flex-col items-center text-center sm:mb-14">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="h-px w-10 bg-[#d9a441]/60 sm:w-14" />
+                  <p className="eyebrow">Khám phá theo dịp</p>
+                  <span className="h-px w-10 bg-[#d9a441]/60 sm:w-14" />
+                </div>
+                <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-[-.045em] text-[#8d1216] sm:text-4xl lg:text-5xl">
+                  Chọn <span className="highlight-gradient font-display italic">danh mục</span> thiệp bạn yêu thích
+                </h2>
+              </div>
+              <StaggerContainer staggerDelay={0.06} direction="scale" className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 lg:grid-cols-8">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setActiveCategory(activeCategory === c.id ? 'all' : c.id)}
+                    aria-pressed={activeCategory === c.id}
+                    className={`cat-card group ${activeCategory === c.id ? 'cat-card--active' : ''}`}
+                    style={{
+                      '--cat-from': c.from,
+                      '--cat-to': c.to,
+                      '--cat-shadow': c.shadow,
+                    } as React.CSSProperties}
+                  >
+                    <span aria-hidden className="cat-card__pattern" />
+                    <span aria-hidden className="cat-card__shine" />
+                    <span className="cat-card__icon">
+                      <c.icon strokeWidth={1.6} />
+                    </span>
+                    <span className="cat-card__label">{c.name}</span>
+                  </button>
+                ))}
+              </StaggerContainer>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
-        {/* TEMPLATES - Mẫu thiệp */}
-        <section id="templates" className="js-reveal relative z-10 bg-white px-5 py-12 sm:px-8 lg:px-12 lg:py-20">
-          <div className="mx-auto max-w-[1320px]">
-            <div className="flex items-end justify-between gap-6">
-              <Heading eyebrow={activeCategory === 'all' ? 'Mẫu thiệp mới nhất' : `Danh mục: ${CATEGORIES.find(c => c.id === activeCategory)?.name}`}>
-                {activeCategory === 'all' ? <>Hơn 500 mẫu thiệp<br className="hidden sm:block"/> đang chờ bạn</> : <>Khám phá mẫu thiệp<br className="hidden sm:block"/> phù hợp với bạn</>}
-              </Heading>
-              {activeCategory !== 'all' && (
-                <button onClick={() => setActiveCategory('all')} className="hidden shrink-0 text-sm font-semibold text-[#d9a441] hover:underline lg:block">
-                  ← Xem tất cả
-                </button>
-              )}
-            </div>
-            <div className="mt-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-              {filteredTemplates.map((t, i) => (
-                <article key={t.id} className="group card-lift" style={{ animationDelay: `${i * .08}s` }}>
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] border-2 border-[#d9a441]/20 shadow-soft group-hover:border-[#d9a441]/50 group-hover:shadow-xl">
-                    <img className="h-full w-full object-cover transition duration-700 group-hover:scale-110" src={t.image} alt={t.title}/>
-                    {t.tag && (
-                      <span className="absolute left-4 top-4 rounded-full bg-[#d9a441] px-3 py-1 text-xs font-bold uppercase text-white shadow">
-                        {t.tag}
-                      </span>
-                    )}
-                    <span className="absolute right-4 top-4 grid size-10 place-items-center rounded-full bg-[#fcfbf8]/90 text-[#d9a441] backdrop-blur transition-transform group-hover:scale-110">
-                      <Heart size={18} className="transition-transform group-hover:fill-[#d9a441]" />
-                    </span>
-                    <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-[#8d1216] via-[#8d1216]/70 to-transparent p-4 transition-transform duration-500 group-hover:translate-y-0">
-                      <button className="w-full rounded-full bg-white py-2 text-sm font-semibold text-[#8d1216] shadow-md transition hover:bg-[#d9a441] hover:text-white">Dùng mẫu này</button>
-                    </div>
-                  </div>
-                  <h3 className="mt-5 text-lg font-semibold tracking-tight text-[#8d1216]">{t.title}</h3>
-                  <div className="mt-1 flex items-center justify-between">
-                    <p className="text-base font-semibold text-[#d9a441]">{t.price} <span className="text-xs font-normal text-[#7c3f06]/60">mỗi thiệp</span></p>
-                    <span className="flex items-center gap-1 text-xs text-[#7c3f06]/70">
-                      <Star size={12} className="fill-[#d9a441] text-[#d9a441]" />
-                      4.9
-                    </span>
-                  </div>
-                </article>
-              ))}
-            </div>
-            <div className="mt-12 flex justify-center">
-              <DarkButton>Xem thêm mẫu thiệp <ArrowRight size={16}/></DarkButton>
-            </div>
-          </div>
-        </section>
+        {/* IMAGE STREAM HERO — 3D corridor of wedding photography */}
+        <ImageStreamHeroSection />
 
         {/* TÍNH NĂNG NỔI BẬT */}
-        <section className="js-reveal relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+        <section className="relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
           <div className="mx-auto grid max-w-[1320px] items-center gap-14 lg:grid-cols-2 lg:gap-24">
-            <div className="js-reveal-left">
+            <ScrollReveal direction="left">
               <p className="eyebrow">Vì sao chọn chúng tôi</p>
-              <h2 className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-.045em] text-[#8d1216] sm:text-5xl lg:text-6xl">Cách dễ nhất để<br/> gửi lời chúc ý nghĩa.</h2>
+              <h2 className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-.045em] text-[#8d1216] sm:text-5xl lg:text-6xl">Cách dễ nhất để<br/> gửi lời chúc{' '}
+                <span className="highlight-gradient font-display italic">ý nghĩa</span>.</h2>
               <p className="mt-6 max-w-xl text-lg leading-8 text-[#7c3f06]/70">Không cần phải là designer, không cần cài phần mềm phức tạp. Chỉ cần vài phút, bạn đã có một chiếc thiệp đẹp và đầy cảm xúc.</p>
-              <div className="my-9 grid gap-5">
+              <StaggerContainer staggerDelay={0.08} className="my-9 grid gap-5">
                 {[
                   [Wand2,'Trình chỉnh sửa kéo thả - không cần kỹ năng'],
                   [LayoutTemplate,'Hàng trăm mẫu thiệp chuyên nghiệp'],
@@ -348,20 +322,21 @@ function App() {
                     {t as string}
                   </div>
                 ))}
-              </div>
+              </StaggerContainer>
               <div className="flex flex-wrap gap-3">
                 <DarkButton>Dùng thử miễn phí <ArrowRight size={16}/></DarkButton>
                 <GradientButton>Xem video hướng dẫn</GradientButton>
               </div>
-            </div>
-            <div className="js-reveal-right relative">
+            </ScrollReveal>
+            <ScrollReveal direction="right" distance={40}>
+            <div className="relative">
               <img className="aspect-[4/5] w-full rounded-[2rem] border-2 border-[#d9a441]/20 object-cover shadow-soft" src={IMAGES.wedding} alt="Tạo thiệp dễ dàng"/>
               <div className="absolute bottom-5 left-5 rounded-2xl border border-[#d9a441]/20 bg-white/95 p-4 shadow-soft backdrop-blur">
                 <span className="flex items-center gap-3 text-sm font-medium text-[#8d1216]">
                   <span className="grid size-10 place-items-center rounded-full bg-[#f7c948] text-white">
                     <Check size={18}/>
                   </span>
-                  Đã gửi 50.000+ thiệp
+                  Đã gửi <AnimatedCounter to={50000} suffix="+" /> thiệp
                 </span>
               </div>
               <div className="absolute right-5 top-5 grid size-20 place-items-center rounded-full bg-[#d9a441] text-white shadow-lg spin-slow">
@@ -381,23 +356,59 @@ function App() {
                 </div>
               </div>
             </div>
+            </ScrollReveal>
           </div>
         </section>
 
         {/* TEMPLATES SECTION - Kho giao diện */}
         <TemplatesSection />
 
+        {/* WHY CHOOSE ZENLOVE - đặt ngay sau Templates */}
+        <WhyChooseSection />
+
+        {/* BLOG - chuyển lên trước FAQ vì nổi bật hơn */}
+        <section className="relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-28">
+          <ScrollReveal>
+          <div className="mx-auto max-w-[1320px]">
+            <Heading eyebrow="Cẩm nang thiệp">Mẹo hay & cảm hứng thiết kế.</Heading>
+            <div className="mt-8 flex justify-center gap-3">
+              <DarkButton>Xem tất cả bài viết</DarkButton>
+              <GradientButton>Đăng ký nhận tin</GradientButton>
+            </div>
+            <StaggerContainer staggerDelay={0.1} direction="up" className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {BLOG_POSTS.map(([cat, title, desc, image]) => (
+                <article className="group card-lift overflow-hidden rounded-3xl border border-[#d9a441]/20 bg-white shadow-soft" key={title as string}>
+                  <div className="relative h-52 overflow-hidden">
+                    <img className="h-full w-full object-cover transition duration-700 group-hover:scale-110" src={image as string} alt=""/>
+                    <span className="absolute inset-0 bg-gradient-to-t from-[#8d1216]/30 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                  </div>
+                  <div className="flex min-h-60 flex-col p-6">
+                    <p className="text-lg font-semibold leading-6 text-[#8d1216] transition-colors group-hover:text-[#d9a441]">{title as string}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#7c3f06]/70">{desc as string}</p>
+                    <a href="#" className="mt-auto flex w-fit items-center gap-2 rounded-full border-2 border-[#d9a441]/30 px-4 py-2 text-xs font-semibold text-[#7c3f06] transition hover:border-[#d9a441] hover:bg-[#d9a441] hover:text-white">
+                      {cat as string}
+                      <ChevronRight size={14} className="transition-transform group-hover:translate-x-1"/>
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </StaggerContainer>
+          </div>
+          </ScrollReveal>
+        </section>
+
         {/* FAQ */}
-        <section id="faq" className="js-reveal relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-28">
+        <section id="faq" className="relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-28">
+          <ScrollReveal>
           <div className="mx-auto max-w-4xl">
             <Heading eyebrow="Câu hỏi thường gặp">Mọi thắc mắc sẽ được giải đáp.</Heading>
-            <Accordion.Root type="single" collapsible className="mt-14 space-y-4">
+            <StaggerContainer staggerDelay={0.06} direction="scale" className="mt-14 space-y-4">
+              <Accordion.Root type="single" collapsible className="contents">
               {faqs.map(([q,a],i) => (
                 <Accordion.Item
                   key={q}
                   value={`i${i}`}
                   className="group overflow-hidden rounded-3xl border border-[#d9a441]/20 bg-white px-6 shadow-soft transition-all hover:border-[#d9a441]/50 hover:shadow-xl sm:px-12"
-                  style={{ transitionDelay: `${i * .05}s` }}
                 >
                   <Accordion.Header>
                     <Accordion.Trigger className="accordion-trigger flex w-full items-center py-7 text-left text-xl font-semibold text-[#8d1216] transition-colors group-hover:text-[#d9a441] sm:text-2xl">
@@ -410,36 +421,10 @@ function App() {
                   </Accordion.Content>
                 </Accordion.Item>
               ))}
-            </Accordion.Root>
+              </Accordion.Root>
+            </StaggerContainer>
           </div>
-        </section>
-
-        {/* BLOG */}
-        <section className="js-reveal relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-28">
-          <div className="mx-auto max-w-[1320px]">
-            <Heading eyebrow="Cẩm nang thiệp">Mẹo hay & cảm hứng thiết kế.</Heading>
-            <div className="mt-8 flex justify-center gap-3">
-              <DarkButton>Xem tất cả bài viết</DarkButton>
-              <GradientButton>Đăng ký nhận tin</GradientButton>
-            </div>
-            <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {BLOG_POSTS.map(([cat,title,image]) => (
-                <article className="group card-lift overflow-hidden rounded-3xl border border-[#d9a441]/20 bg-white shadow-soft" key={title as string}>
-                  <div className="relative h-52 overflow-hidden">
-                    <img className="h-full w-full object-cover transition duration-700 group-hover:scale-110" src={image as string} alt=""/>
-                    <span className="absolute inset-0 bg-gradient-to-t from-[#8d1216]/30 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                  </div>
-                  <div className="flex min-h-52 flex-col p-6">
-                    <p className="text-lg font-semibold leading-6 text-[#8d1216] transition-colors group-hover:text-[#d9a441]">{title as string}</p>
-                    <a href="#" className="mt-auto flex w-fit items-center gap-2 rounded-full border-2 border-[#d9a441]/30 px-4 py-2 text-xs font-semibold text-[#7c3f06] transition hover:border-[#d9a441] hover:bg-[#d9a441] hover:text-white">
-                      {cat as string}
-                      <ChevronRight size={14} className="transition-transform group-hover:translate-x-1"/>
-                    </a>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
+          </ScrollReveal>
         </section>
       </main>
 

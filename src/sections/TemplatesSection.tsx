@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { StaggerContainer, ScrollReveal } from '../components'
 
 const TEMPLATES = [
   // Cafe (8)
@@ -165,7 +166,7 @@ export default function TemplatesSection() {
   }
 
   return (
-    <section className="templates-section js-reveal" id="templatesSection">
+    <section className="templates-section" id="templatesSection">
       {/* Decorative flower */}
       <div className="deco-flower">
         <img src="/templates-section/images/elements/hac-2.png" alt="" aria-hidden="true" className="floating" style={{ width: '100%', height: 'auto' }} />
@@ -187,6 +188,7 @@ export default function TemplatesSection() {
 
       <div className="mx-auto max-w-[1280px] px-6">
         {/* Header */}
+        <ScrollReveal>
         <div className="mx-auto max-w-4xl text-center">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-12 bg-[#d9a441]" />
@@ -194,16 +196,18 @@ export default function TemplatesSection() {
             <span className="h-px w-12 bg-[#d9a441]" />
           </div>
           <h2 className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-.045em] text-[#8d1216] sm:text-5xl lg:text-6xl">
-            Kho giao diện <span className="text-gradient-viet">tuyệt đẹp</span>,<br className="hidden sm:block" /> sẵn sàng sử dụng
+            Kho giao diện <span className="highlight-gradient font-display italic">tuyệt đẹp</span>,<br className="hidden sm:block" /> sẵn sàng sử dụng
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-[#7c3f06]/70">
             Đây là ảnh chụp thật từ các mẫu website đang bán trên vngoweb —
             di chuột lên mẫu chính giữa để cuộn xem toàn trang.
           </p>
         </div>
+        </ScrollReveal>
 
         {/* Filter Buttons */}
-        <div className="filter-bar" style={{ transitionDelay: '90ms' }}>
+        <ScrollReveal delay={0.1}>
+        <StaggerContainer staggerDelay={0.05} direction="scale" className="filter-bar">
           {FILTERS.map(f => (
             <button
               key={f.key}
@@ -213,7 +217,8 @@ export default function TemplatesSection() {
               {f.label}
             </button>
           ))}
-        </div>
+        </StaggerContainer>
+        </ScrollReveal>
 
         {/* 3D Carousel */}
         <div className="carousel-3d-wrap">

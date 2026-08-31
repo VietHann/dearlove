@@ -6,11 +6,38 @@
   /* Brand: Dearlove (Vietnamese Wedding Gold) */
   --background: 44 50% 97%;
   --foreground: 0 60% 25%;
+
+  /* Cards */
+  --card: 0 0% 100%;
+  --card-foreground: 0 60% 25%;
+
+  /* Popovers */
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 60% 25%;
+
+  /* Primary brand gold */
   --primary: 39 67% 55%;
   --primary-foreground: 0 0% 100%;
-  --card: 0 0% 100%;
+
+  /* Secondary brand red */
+  --secondary: 0 73% 31%;
+  --secondary-foreground: 0 0% 100%;
+
+  /* Muted surfaces */
   --muted: 39 40% 93%;
+  --muted-foreground: 25 35% 35%;
+
+  /* Accent — used sparingly */
+  --accent: 39 67% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive */
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 0 0% 100%;
+
   --border: 39 30% 86%;
+  --input: 39 30% 86%;
+  --ring: 39 67% 55%;
   --radius: 9999px;
 
   /* Custom palette */
@@ -48,6 +75,49 @@ button, a { -webkit-tap-highlight-color: transparent; }
 /* Hide scrollbar for horizontal scrollers */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* ============================================================
+   Why Choose Section
+   ============================================================ */
+
+/* Gold-to-red gradient text for highlighted "special" words in headings
+   (e.g. brand name "Dearlove", "đẹp", "danh mục", "tuyệt đẹp"…).
+   Pair with `font-display italic` so the word reads as a featured keyword. */
+.highlight-gradient {
+  /* Italic glyphs (especially Vietnamese diacritics) can overhang the
+     inline line box. Give the painted glyph a small, local safety area so
+     section-level overflow clipping cannot cut its top or side bearings. */
+  display: inline-block;
+  padding: 0.08em 0.06em 0.14em;
+  margin: -0.08em -0.06em -0.14em;
+  line-height: 1.15;
+  vertical-align: baseline;
+  background-image: linear-gradient(110deg, #d9a441 0%, #f7c948 35%, #e0a422 60%, #b91c1c 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(124, 63, 6, .12));
+}
+
+/* Section-local floating petals (slower, gentler than global drift) */
+@keyframes petal-section-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%      { transform: translate3d(6px, -28px, 0) rotate(22deg); }
+}
+.petal-section {
+  animation: petal-section-float 8s ease-in-out infinite;
+  will-change: transform;
+}
+.petal-section--delayed {
+  animation: petal-section-float 10s ease-in-out 2.5s infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petal-section,
+  .petal-section--delayed { animation: none; }
+}
 
 /* Smooth shadow utilities */
 .shadow-soft { box-shadow: 0 8px 30px rgba(124, 63, 6, .08); }
@@ -729,9 +799,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   color: #d92d30;
   display: inline-block;
   transform: rotate(-6deg) translateY(-0.05em);
-  padding: 0 0.05em;
+  padding: 0.08em 0.08em 0.14em;
+  margin: -0.08em -0.08em -0.14em;
   font-size: 1.18em;
-  line-height: 1;
+  line-height: 1.1;
   text-shadow: 1px 1px 0 rgba(141, 18, 22, .08);
   background-image: linear-gradient(135deg, #ef4444 0%, #d92d30 45%, #8d1216 100%);
   -webkit-background-clip: text;
@@ -852,4 +923,212 @@ button, a { -webkit-tap-highlight-color: transparent; }
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* ============================================================
+   Framer Motion + Lenis Integration
+   ============================================================ */
+
+/* Prevent layout shift when Framer Motion initialises motion.div */
+.motion-ready {
+  will-change: transform, opacity;
+}
+
+/* Ensure parallax petals stay above content */
+.parallax-petal-layer {
+  z-index: 1 !important;
+}
+
+/* Smooth scroll override when Lenis is active */
+html.lenis-active {
+  scroll-behavior: auto !important;
+}
+
+/* When lenis is not active (SSR / reduced-motion), restore native smooth */
+html:not(.lenis-enabled) {
+  scroll-behavior: smooth;
+}
+
+/* Stagger items need overflow visible so children aren't clipped */
+.stagger-container {
+  overflow: visible !important;
+}
+
+/* ============================================================
+   Category Cards (DANH MỤC section)
+   - Square cards with per-category gradient themes
+   - Premium hover: lift + scale + gradient fill + icon rotate + shine
+   ============================================================ */
+.cat-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 1.125rem;
+  background: #ffffff;
+  border: 1.5px solid rgba(217, 164, 65, 0.18);
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.5s cubic-bezier(.16, 1, .3, 1),
+    border-color 0.4s ease,
+    box-shadow 0.5s cubic-bezier(.16, 1, .3, 1);
+  will-change: transform;
+}
+
+.cat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--cat-from) 0%, var(--cat-to) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cat-card__pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.30) 0%, transparent 36%),
+    radial-gradient(circle at 82% 86%, rgba(255, 255, 255, 0.18) 0%, transparent 32%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cat-card__shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.40) 50%,
+    transparent 75%);
+  background-size: 250% 100%;
+  background-position: 200% 0;
+  opacity: 0;
+  transition: opacity 0.4s ease, background-position 0.9s ease;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.cat-card__icon {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--cat-from) 18%, white) 0%,
+    color-mix(in srgb, var(--cat-to) 18%, white) 100%);
+  color: var(--cat-to);
+  transition:
+    transform 0.5s cubic-bezier(.16, 1, .3, 1),
+    background 0.4s ease,
+    color 0.4s ease,
+    box-shadow 0.4s ease;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.cat-card__icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.cat-card__label {
+  position: relative;
+  z-index: 2;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #8d1216;
+  text-align: center;
+  letter-spacing: 0.005em;
+  line-height: 1.2;
+  transition: color 0.4s ease;
+}
+
+/* Hover state */
+.cat-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  border-color: transparent;
+  box-shadow:
+    0 18px 36px -10px var(--cat-shadow),
+    0 8px 20px -4px rgba(124, 63, 6, 0.14);
+}
+
+.cat-card:hover::before { opacity: 1; }
+.cat-card:hover .cat-card__pattern { opacity: 1; }
+.cat-card:hover .cat-card__shine {
+  opacity: 1;
+  background-position: -50% 0;
+}
+
+.cat-card:hover .cat-card__icon {
+  transform: scale(1.14) rotate(-10deg);
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+}
+
+.cat-card:hover .cat-card__label { color: #ffffff; }
+
+/* Active (selected) state — gradient persists, no animation */
+.cat-card--active {
+  background: linear-gradient(135deg, var(--cat-from) 0%, var(--cat-to) 100%);
+  border-color: transparent;
+  box-shadow:
+    0 12px 28px -6px var(--cat-shadow),
+    0 6px 14px -3px rgba(124, 63, 6, 0.08);
+  transform: translateY(-2px);
+}
+
+.cat-card--active::before { opacity: 1; }
+.cat-card--active .cat-card__pattern { opacity: 1; }
+
+.cat-card--active .cat-card__icon {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+  transform: scale(1.08);
+}
+
+.cat-card--active .cat-card__label { color: #ffffff; }
+
+/* Focus-visible for keyboard users */
+.cat-card:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(217, 164, 65, 0.45),
+    0 12px 28px -6px var(--cat-shadow, rgba(124, 63, 6, 0.2));
+  border-color: transparent;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cat-card,
+  .cat-card__icon,
+  .cat-card__label,
+  .cat-card__shine,
+  .cat-card__pattern {
+    transition-duration: 0.01ms !important;
+  }
+  .cat-card:hover { transform: none; }
+  .cat-card__shine { display: none; }
 }
