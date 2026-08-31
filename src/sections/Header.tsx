@@ -53,8 +53,7 @@ export function Header() {
             alt="Dearlove - Digital Invites"
             animate={{ height: scrolled ? 44 : 64 }}
             transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-            style={{ width: 'auto' }}
-            className="object-contain"
+            className="h-10 w-auto object-contain sm:h-12 md:h-14 lg:h-16"
           />
         </a>
         <div className="hidden items-center gap-7 lg:flex">

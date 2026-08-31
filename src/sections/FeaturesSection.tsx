@@ -19,7 +19,7 @@ const FEATURES: Array<[typeof Wand2, string]> = [
  */
 export function FeaturesSection() {
   return (
-    <section className="relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+    <section id="features" className="relative z-10 bg-[#fcfbf8] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
       <div className="mx-auto grid max-w-[1320px] items-center gap-14 lg:grid-cols-2 lg:gap-24">
         <ScrollReveal direction="left">
           <p className="eyebrow">Vì sao chọn chúng tôi</p>

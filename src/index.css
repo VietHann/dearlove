@@ -176,6 +176,28 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .animate-marquee { animation: marquee 22s linear infinite; }
 .animate-marquee-reverse { animation: marquee-reverse 22s linear infinite; }
 
+/* Slow the marquee on mobile/tablet so the blurred background feels
+   ambient rather than distracting — same loop, calmer pace. */
+@media (max-width: 1023px) {
+  .animate-marquee,
+  .animate-marquee-reverse {
+    animation-duration: 32s;
+  }
+  .hero-bg-marquee .animate-marquee,
+  .hero-bg-marquee .animate-marquee-reverse {
+    animation-duration: 38s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .hero-bg-marquee .animate-marquee,
+  .hero-bg-marquee .animate-marquee-reverse {
+    animation: none;
+  }
+}
+
 /* ============ Floating elements ============ */
 @keyframes float-heart {
   0%, 100% { transform: translateY(0) rotate(-5deg); }
