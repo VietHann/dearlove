@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Menu, UserRound, X } from 'lucide-react'
 import { DarkButton } from '../components/ui/DarkButton'
 import { GradientButton } from '../components/ui/GradientButton'
-import { IMAGES, NAV_LINKS } from '../lib/constants'
+import { IMAGES, NAV_LINKS, ROUTE_BY_LABEL } from '../lib/constants'
 
 /**
  * Header — sticky top nav with scroll-aware morphing shape.
@@ -11,17 +12,57 @@ import { IMAGES, NAV_LINKS } from '../lib/constants'
  * The nav bar flattens into a floating pill when the page scrolls past 24px,
  * driven by a single `scrolled` flag. Mobile menu uses a local toggle so
  * the parent (App.tsx) doesn't need to know about it.
+ *
+ * Scroll detection listens to BOTH native window scroll AND the Lenis
+ * instance (when present) so the morph state stays in sync whether the
+ * smooth-scroll engine is active or not.
  */
 export function Header() {
   const [menu, setMenu] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const updateScrolled = () => setScrolled(window.scrollY > 24)
+
+    updateScrolled()
+    window.addEventListener('scroll', updateScrolled, { passive: true })
+
+    // Lenis (initialised in main.tsx) exposes itself on window.__lenis.
+    // Subscribe to its scroll event too so the pill morph stays in sync
+    // when smooth-scroll is intercepting native wheel events.
+    const lenis = (window as any).__lenis as
+      | { on: (event: 'scroll', cb: () => void) => void; off?: (event: 'scroll', cb: () => void) => void }
+      | undefined
+    let unsubscribe: (() => void) | undefined
+    if (lenis?.on) {
+      lenis.on('scroll', updateScrolled)
+      unsubscribe = () => lenis.off?.('scroll', updateScrolled)
+    }
+
+    return () => {
+      window.removeEventListener('scroll', updateScrolled)
+      unsubscribe?.()
+    }
   }, [])
+
+  // Close the mobile menu on every route change.
+  useEffect(() => {
+    setMenu(false)
+  }, [location.pathname])
+
+  /**
+   * Each NAV_LINK is either a real route (/pricing) or an in-page anchor
+   * on the home page. When the user is NOT on home, anchor links fall
+   * back to navigating home and jumping to the section.
+   */
+  const linkHref = (label: string): string => {
+    const route = ROUTE_BY_LABEL[label]
+    if (route) return route
+    if (isHome) return `#${label.toLowerCase().replace(/\s+/g, '')}`
+    return `/#${label.toLowerCase().replace(/\s+/g, '')}`
+  }
 
   return (
     <header
@@ -47,7 +88,7 @@ export function Header() {
             : ''
         }`}
       >
-        <a className="group flex items-center" href="#">
+        <Link className="group flex items-center" to="/">
           <motion.img
             src={IMAGES.logo}
             alt="Dearlove - Digital Invites"
@@ -55,15 +96,15 @@ export function Header() {
             transition={{ type: 'spring', stiffness: 320, damping: 32 }}
             className="h-10 w-auto object-contain sm:h-12 md:h-14 lg:h-16"
           />
-        </a>
-        <div className="hidden items-center gap-7 lg:flex">
+        </Link>
+        <div className="hidden items-center gap-10 lg:flex">
           {NAV_LINKS.map(x => (
-            <a className="text-sm font-medium text-[#7c3f06] transition-colors hover:text-[#d9a441] underline-grow" href="#templates" key={x}>{x}</a>
+            <Link className="text-[15px] font-medium text-[#7c3f06] transition-colors hover:text-[#d9a441] underline-grow" to={linkHref(x)} key={x}>{x}</Link>
           ))}
         </div>
         <div className="flex items-center gap-3">
           <DarkButton className="hidden sm:inline-flex">Tạo thiệp <ArrowRight size={16}/></DarkButton>
-          <GradientButton className="hidden sm:inline-flex"><UserRound size={16}/> Đăng nhập</GradientButton>
+          <GradientButton href="/auth" className="hidden sm:inline-flex"><UserRound size={16}/> Đăng nhập</GradientButton>
           <button aria-label="Toggle menu" className="grid size-11 place-items-center rounded-full border border-[#d9a441]/30 text-[#8d1216] lg:hidden" onClick={() => setMenu(!menu)}>
             {menu ? <X size={20}/> : <Menu size={20}/>}
           </button>
@@ -80,7 +121,7 @@ export function Header() {
           >
             <div className="grid gap-1">
               {NAV_LINKS.map(x => (
-                <a className="rounded-xl px-3 py-3 font-medium text-[#7c3f06] transition-colors hover:bg-[#fdf2e3]" href="#templates" key={x}>{x}</a>
+                <Link className="rounded-xl px-3 py-3 font-medium text-[#7c3f06] transition-colors hover:bg-[#fdf2e3]" to={linkHref(x)} onClick={() => setMenu(false)} key={x}>{x}</Link>
               ))}
             </div>
           </motion.div>
