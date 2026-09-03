@@ -1,0 +1,194 @@
+/* Templates Page Styles */
+
+/* Typography inheritance — Playfair Display for headings, Be Vietnam Pro for body */
+.page-content-header,
+.page-content-body {
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+}
+.page-content-header .page-title,
+.page-content-header h1,
+.page-content-header h2 {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-feature-settings: "kern", "liga", "calt";
+}
+
+/* Page Content Header */
+.page-content-header {
+  background: transparent;
+}
+
+.page-content-header-wrapper {
+  padding-top: 48px;
+  padding-bottom: 32px;
+  display: grid;
+  grid-auto-rows: max-content;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  text-align: left;
+  margin: 0 auto;
+}
+
+/* Breadcrumbs */
+.breacrumbs-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.breacrumbs-wrapper :global(.ant-breadcrumb-link),
+.breadcrumb-item {
+  color: var(--color-primary, #ff4874) !important;
+}
+
+/* Header Info */
+.header-info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Page Title — uses font-display (Playfair Display) + highlight-gradient for keywords */
+.page-title {
+  margin: 0;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: #8d1216;
+}
+@media (min-width: 458px) {
+  .page-title { font-size: 40px; }
+}
+@media (min-width: 1144px) {
+  .page-title { font-size: 52px; }
+}
+
+.underline-text {
+  padding: 0 2px;
+  background-image: linear-gradient(120deg, rgba(255, 127, 150, 0.8), rgba(255, 173, 76, 0.8));
+  background-repeat: no-repeat;
+  background-size: 100% 0.25em;
+  background-position: 0 84%;
+  transition: background-size 0.25s ease-out;
+}
+
+/* Page Description */
+.page-description {
+  color: #7c3f06;
+  font-weight: 400;
+  line-height: 1.7;
+  font-size: 16px;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0.85;
+}
+@media (min-width: 1144px) {
+  .page-description {
+    line-height: 1.7;
+    font-size: 17px;
+  }
+}
+
+/* Decorative Elements */
+.decorate-arrow,
+.decorate-polish,
+.decorate-wave {
+  position: absolute;
+  display: none;
+}
+
+.decorate-wave {
+  top: 148px;
+  left: -90px;
+}
+
+.decorate-polish {
+  top: -24px;
+  right: 10px;
+}
+
+.decorate-arrow {
+  right: -18px;
+  bottom: -66px;
+}
+
+/* Page Content Body */
+.page-content-body {
+  padding-bottom: 32px;
+  margin: 0 auto;
+}
+
+/* Template Item V3 */
+.template-item-v3 {
+  --image-scroll-percent: 0%;
+  --scroll-duration: 0.6s;
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Responsive Styles */
+@media (min-width: 1144px) {
+  .page-content-header-wrapper {
+    gap: 24px;
+    min-height: 320px;
+  }
+
+  .header-info {
+    gap: 18px;
+  }
+
+  .decorate-wave {
+    top: 138px;
+    left: -182px;
+  }
+
+  .decorate-polish {
+    top: -44px;
+    right: 0;
+  }
+
+  .decorate-arrow {
+    right: -96px;
+    bottom: -40px;
+  }
+}
+
+@media (min-width: 776px) {
+  .page-content-header-wrapper {
+    text-align: center;
+    min-height: 320px;
+  }
+
+  .decorate-arrow,
+  .decorate-polish,
+  .decorate-wave {
+    display: block;
+  }
+}
+
+/* Template Image Scroll Animation */
+@keyframes template-scroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(var(--image-scroll-percent, 0%));
+  }
+}
+
+/* Template hover effect */
+.group:hover .group-hover\:translate-y-\[var\(--image-scroll-percent\)\] {
+  animation: template-scroll var(--scroll-duration, 0.6s) ease-out;
+}

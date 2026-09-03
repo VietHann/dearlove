@@ -1,0 +1,60 @@
+/*
+ * Contact page — minimal styling on top of Tailwind.
+ *
+ * Uses the brand palette already established on the marketing site:
+ *   - Cream gold/red brand colors from pricing.css + index.css
+ *   - Pink eyebrow badges from PricingFAQ
+ *   - Soft card shadows & rounded corners from blog/feature sections
+ */
+
+/* ============================================================
+   Channel cards
+   ============================================================ */
+.channel-card {
+  /* Make sure the gradient halo on hover doesn't get clipped */
+  overflow: hidden;
+}
+
+/* Subtle golden highlight on the icon when hovered */
+.channel-card:hover .channel-card-icon-wrap {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+/* ============================================================
+   Support topic cards
+   ============================================================ */
+.contact-topic {
+  /* Override default <a> styles for full-card clickability */
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================================================
+   Map canvas
+   ============================================================ */
+.contact-map {
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(217, 164, 65, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(185, 28, 28, 0.06) 0%, transparent 36%);
+}
+
+.office-card {
+  /* Prevents long addresses from breaking the grid */
+  max-width: 100%;
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .contact-input,
+  .channel-card,
+  .contact-topic,
+  .office-card {
+    transition-duration: 0.01ms !important;
+  }
+  .channel-card:hover,
+  .contact-topic:hover {
+    transform: none !important;
+  }
+}
