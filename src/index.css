@@ -812,129 +812,25 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .text-pretty  { text-wrap: pretty; }
 
 /* ============================================================
-   Problem Section - Cursive red highlight for "100+"
+   Problem Section - Heading typography utilities
    ============================================================ */
-.problem-script {
-  font-family: 'Brush Script MT', 'Lucida Handwriting', 'Snell Roundhand', cursive;
-  font-style: italic;
-  font-weight: 700;
-  color: #d92d30;
-  display: inline-block;
-  transform: rotate(-6deg) translateY(-0.05em);
-  padding: 0.08em 0.08em 0.14em;
-  margin: -0.08em -0.08em -0.14em;
-  font-size: 1.18em;
-  line-height: 1.1;
-  text-shadow: 1px 1px 0 rgba(141, 18, 22, .08);
-  background-image: linear-gradient(135deg, #ef4444 0%, #d92d30 45%, #8d1216 100%);
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
 
-/* Problem card */
-.problem-card {
-  background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 12px 28px -6px rgba(124, 63, 6, 0.12),
-              0 4px 10px -2px rgba(124, 63, 6, 0.06);
-  transition: transform .25s cubic-bezier(.16, 1, .3, 1),
-              box-shadow .25s cubic-bezier(.16, 1, .3, 1);
-  will-change: transform;
-}
-.problem-card:hover {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 20px 40px -8px rgba(229, 65, 83, 0.22),
-              0 8px 16px -4px rgba(124, 63, 6, 0.08);
-}
-.problem-card__icon {
-  display: grid;
-  place-items: center;
-  width: 6rem;
-  height: 6rem;
-  border-radius: 9999px;
-  background: radial-gradient(circle at 30% 30%, #fde8a8 0%, #f9d375 55%, #f3c14b 100%);
-  color: #b45309;
-  box-shadow: inset 0 -8px 18px rgba(180, 83, 9, 0.18),
-              0 6px 14px -4px rgba(243, 193, 75, 0.45);
-}
-
-@keyframes problems-card-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.problem-card {
-  animation: problems-card-in .6s cubic-bezier(.16, 1, .3, 1) both;
-}
-
-.problems-cards-scroll {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding: 1rem;
-  margin: 0.5rem auto 0;
-  max-width: 64rem;
-  scrollbar-width: none;
-}
-.problems-cards-scroll::-webkit-scrollbar { display: none; }
-.problems-cards-scroll > .problem-card {
-  flex: 0 0 78%;
-  scroll-snap-align: center;
-}
-
-@media (min-width: 768px) {
-  .problems-cards-scroll { display: none; }
-}
-
-@keyframes problems-heading-in {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.problems-heading-pc,
-.problems-heading-mobile {
-  animation: problems-heading-in .7s cubic-bezier(.16, 1, .3, 1) both;
-}
-
+/* Signature/cursive style used for the rotated "100+" number. */
 .font-signature {
   font-family: 'Playfair Display', 'Times New Roman', serif;
   font-style: italic;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
+
+/* Headline style for problem card titles. */
 .font-heading {
   font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
   font-weight: 800;
   letter-spacing: 0.01em;
 }
-.problems-icon {
-  width: 5rem;
-  height: auto;
-  flex-shrink: 0;
-}
-.problems-icon-mobile {
-  width: 4.5rem;
-  height: auto;
-  margin-top: 0.5rem;
-}
 
-/* The arrow belongs to the invitation line, keeping it below the first heading. */
-.problems-invitation-line {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 0.625rem;
-}
-.problems-icon-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 5rem;
-  height: 2.5rem;
-}
+/* Screen-reader only helper (used for the "Hơn 100 khách mời" label). */
 .sr-only {
   position: absolute;
   width: 1px;

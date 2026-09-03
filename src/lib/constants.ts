@@ -66,10 +66,24 @@ export const BLOG_POSTS: Array<[string, string, string, string]> = [
   ['Cảm hứng', 'Ý tưởng thiệp Tết handmade đầy ý nghĩa', 'Gợi ý những ý tưởng làm thiệp Tết thủ công tinh tế, gửi gắm lời chúc ấm áp đến người thân yêu.', IMAGES.festival],
 ]
 
-export const NAV_LINKS = ['Mẫu Thiệp', 'Danh Mục', 'Giá Cả', 'Câu Chuyện', 'Blog', 'Hỗ Trợ'] as const
+export const NAV_LINKS = ['Trang Chủ', 'Mẫu Thiệp', 'Giá Cả', 'Blog', 'Liên Hệ'] as const
 
 export const FOOTER_SECTIONS: Array<[string, ...string[]]> = [
   ['Sản phẩm', 'Thiệp cưới', 'Thiệp sinh nhật', 'Thiệp chúc mừng', 'Thiệp lễ Tết'],
   ['Công ty', 'Giới thiệu', 'Tuyển dụng', 'Báo chí', 'Đối tác'],
   ['Hỗ trợ', 'Trung tâm hỗ trợ', 'Điều khoản', 'Bảo mật', 'Liên hệ'],
 ]
+
+/**
+ * Canonical label → URL mapping shared by <Header /> and the
+ * placeholder page. Keep in sync with the <Route /> declarations in
+ * App.tsx — any new public page should be added here too.
+ */
+export const ROUTE_BY_LABEL: Record<string, string> = {
+  'Trang Chủ': '/',
+  'Mẫu Thiệp': '/templates',
+  'Giá Cả': '/pricing',
+  'Blog': '/blog',
+  'Liên Hệ': '/contact',
+  'Hỗ Trợ': '/support',
+}
