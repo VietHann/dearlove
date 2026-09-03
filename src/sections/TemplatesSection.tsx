@@ -2,69 +2,57 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { StaggerContainer, ScrollReveal } from '../components'
 
 const TEMPLATES = [
-  // Cafe (8)
-  { name: 'Garden Oasis', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: 'Miễn phí', badge: null, img: 'screen-D5A5CUxl.png', url: 'vngoweb.com/coffe-1' },
-  { name: 'Tropical Chill', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: '299,000đ', badge: 'MỚI', img: 'screen-E1F9MOF-.png', url: 'vngoweb.com/coffe-2' },
-  { name: 'The Ocean Cafe', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: '499,000đ', badge: 'BÁN CHẠY', img: 'screen-CSqla4Re.png', url: 'vngoweb.com/coffe-3' },
-  { name: 'Koi Garden', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: '399,000đ', badge: null, img: 'screen-CgCCgAYu.png', url: 'vngoweb.com/coffe-4' },
-  { name: 'Mật Ngọt Tea', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: 'Miễn phí', badge: 'MỚI', img: 'screen-COd9dlwS.png', url: 'vngoweb.com/coffe-5' },
-  { name: 'Oasis Symphony', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: '349,000đ', badge: 'MỚI', img: 'screen-C3MeFa6u.png', url: 'vngoweb.com/coffe-6' },
-  { name: 'Garden Sanctuary', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: 'Miễn phí', badge: null, img: 'screen-D4bCK53t.png', url: 'vngoweb.com/coffe-7' },
-  { name: 'Sage Sanctuary', category: 'cafe', catLabel: 'Cafe & Đồ Uống', price: '299,000đ', badge: 'MỚI', img: 'screen-CHaUdNcQ.png', url: 'vngoweb.com/coffe-8' },
+  // Truyền thống (5)
+  { name: 'Thành Hỷ', category: 'traditional', catLabel: 'Truyền Thống', price: 'Miễn phí', badge: 'MỚI', img: 'screen-Co7xW3hO.png', url: 'dearlove.vn/thanh-hy' },
+  { name: 'Song Hỷ', category: 'traditional', catLabel: 'Truyền Thống', price: '99,000đ', badge: null, img: 'screen-BePdfixw.png', url: 'dearlove.vn/song-hy' },
+  { name: 'Lễ Vu Quy', category: 'traditional', catLabel: 'Truyền Thống', price: '149,000đ', badge: 'BÁN CHẠY', img: 'screen-BH9TbqLT.png', url: 'dearlove.vn/vu-quy' },
+  { name: 'Hỷ Phát', category: 'traditional', catLabel: 'Truyền Thống', price: 'Miễn phí', badge: null, img: 'screen-DV6BzFar.png', url: 'dearlove.vn/hy-phat' },
+  { name: 'Gia Tiên', category: 'traditional', catLabel: 'Truyền Thống', price: '199,000đ', badge: 'MỚI', img: 'screen-D5A5CUxl.png', url: 'dearlove.vn/gia-tien' },
 
-  // Restaurant (6)
-  { name: 'Bếp Việt Premium', category: 'restaurant', catLabel: 'Nhà Hàng & Quán Ăn', price: '399,000đ', badge: 'MỚI', img: 'screen-t1QviRV4.png', url: 'vngoweb.com/restaurant-2' },
-  { name: 'Sizzling Hearth', category: 'restaurant', catLabel: 'Nhà Hàng & Quán Ăn', price: 'Miễn phí', badge: null, img: 'screen-De9bFzaH.png', url: 'vngoweb.com/restaurant-3' },
-  { name: 'Siam Street Food', category: 'restaurant', catLabel: 'Nhà Hàng & Quán Ăn', price: '299,000đ', badge: 'MỚI', img: 'screen-BpAogSip.png', url: 'vngoweb.com/restaurant-4' },
-  { name: 'Golden Lotus Dining', category: 'restaurant', catLabel: 'Nhà Hàng & Quán Ăn', price: 'Miễn phí', badge: null, img: 'screen-DZ-rpQ-Z.png', url: 'vngoweb.com/restaurant-5' },
-  { name: 'Siam Teak House', category: 'restaurant', catLabel: 'Nhà Hàng & Quán Ăn', price: '299,000đ', badge: 'MỚI', img: 'screen-bgCJtZ2a.png', url: 'vngoweb.com/restaurant-6' },
-  { name: 'Crimson Sushi', category: 'restaurant', catLabel: 'Nhà Hàng & Quán Ăn', price: 'Miễn phí', badge: null, img: 'screen-VqM2YBzf.png', url: 'vngoweb.com/restaurant-7' },
+  // Hiện đại (5)
+  { name: 'Modern Love', category: 'modern', catLabel: 'Hiện Đại', price: 'Miễn phí', badge: 'MỚI', img: 'screen-E1F9MOF-.png', url: 'dearlove.vn/modern-love' },
+  { name: 'Clean Type', category: 'modern', catLabel: 'Hiện Đại', price: '149,000đ', badge: null, img: 'screen-CSqla4Re.png', url: 'dearlove.vn/clean-type' },
+  { name: 'Urban Romance', category: 'modern', catLabel: 'Hiện Đại', price: '199,000đ', badge: 'MỚI', img: 'screen-CgCCgAYu.png', url: 'dearlove.vn/urban-romance' },
+  { name: 'Bold Mono', category: 'modern', catLabel: 'Hiện Đại', price: 'Miễn phí', badge: null, img: 'screen-COd9dlwS.png', url: 'dearlove.vn/bold-mono' },
+  { name: 'Typographic', category: 'modern', catLabel: 'Hiện Đại', price: '249,000đ', badge: 'BÁN CHẠY', img: 'screen-C3MeFa6u.png', url: 'dearlove.vn/typographic' },
 
-  // Spa (5)
-  { name: 'Aura Clinic', category: 'spa', catLabel: 'Spa & Làm Đẹp', price: 'Miễn phí', badge: 'MỚI', img: 'screen-BKf7lZ4i.png', url: 'vngoweb.com/spa-1' },
-  { name: 'Aura Wellness', category: 'spa', catLabel: 'Spa & Làm Đẹp', price: '299,000đ', badge: 'MỚI', img: 'screen-Bg6mAIDY.png', url: 'vngoweb.com/spa-2' },
-  { name: 'Luminous Precision Clinic', category: 'spa', catLabel: 'Spa & Làm Đẹp', price: '299,000đ', badge: 'MỚI', img: 'screen-Dz_o2gGA.png', url: 'vngoweb.com/spa-4' },
-  { name: 'Zenith', category: 'spa', catLabel: 'Spa & Làm Đẹp', price: 'Miễn phí', badge: null, img: 'screen-oQ5tO4eU.png', url: 'vngoweb.com/spa-5' },
-  { name: 'Ocean Oasis', category: 'spa', catLabel: 'Spa & Làm Đẹp', price: '299,000đ', badge: 'MỚI', img: 'screen--Nx0rWgk.png', url: 'vngoweb.com/spa-6' },
+  // Tối giản (5)
+  { name: 'Soft Beige', category: 'minimal', catLabel: 'Tối Giản', price: 'Miễn phí', badge: 'MỚI', img: 'screen-D4bCK53t.png', url: 'dearlove.vn/soft-beige' },
+  { name: 'Mono Chic', category: 'minimal', catLabel: 'Tối Giản', price: '149,000đ', badge: null, img: 'screen-CHaUdNcQ.png', url: 'dearlove.vn/mono-chic' },
+  { name: 'Pure White', category: 'minimal', catLabel: 'Tối Giản', price: 'Miễn phí', badge: null, img: 'screen-t1QviRV4.png', url: 'dearlove.vn/pure-white' },
+  { name: 'Line Art', category: 'minimal', catLabel: 'Tối Giản', price: '199,000đ', badge: 'MỚI', img: 'screen-De9bFzaH.png', url: 'dearlove.vn/line-art' },
+  { name: 'Ivory Quiet', category: 'minimal', catLabel: 'Tối Giản', price: '249,000đ', badge: null, img: 'screen-BpAogSip.png', url: 'dearlove.vn/ivory-quiet' },
 
-  // Gym (3)
-  { name: 'Crimson Peak', category: 'gym', catLabel: 'Gym & Thể Thao', price: 'Miễn phí', badge: 'MỚI', img: 'screen-B7cs4Wz9.png', url: 'vngoweb.com/gym-2' },
-  { name: 'Terra Strength', category: 'gym', catLabel: 'Gym & Thể Thao', price: 'Miễn phí', badge: 'MỚI', img: 'screen-B5gDw83U.png', url: 'vngoweb.com/gym-3' },
-  { name: 'Aether Fitness', category: 'gym', catLabel: 'Gym & Thể Thao', price: 'Miễn phí', badge: 'MỚI', img: 'screen-BJQ9HPvx.png', url: 'vngoweb.com/gym-4' },
+  // Hoa lãng mạn (6)
+  { name: 'Garden Bloom', category: 'floral', catLabel: 'Hoa Lãng Mạn', price: 'Miễn phí', badge: 'MỚI', img: 'screen-DZ-rpQ-Z.png', url: 'dearlove.vn/garden-bloom' },
+  { name: 'Rose Whisper', category: 'floral', catLabel: 'Hoa Lãng Mạn', price: '149,000đ', badge: 'BÁN CHẠY', img: 'screen-bgCJtZ2a.png', url: 'dearlove.vn/rose-whisper' },
+  { name: 'Cherry Blossom', category: 'floral', catLabel: 'Hoa Lãng Mạn', price: '199,000đ', badge: 'MỚI', img: 'screen-VqM2YBzf.png', url: 'dearlove.vn/cherry-blossom' },
+  { name: 'Lavender Field', category: 'floral', catLabel: 'Hoa Lãng Mạn', price: 'Miễn phí', badge: null, img: 'screen-BKf7lZ4i.png', url: 'dearlove.vn/lavender-field' },
+  { name: 'Peony Garden', category: 'floral', catLabel: 'Hoa Lãng Mạn', price: '249,000đ', badge: null, img: 'screen-Bg6mAIDY.png', url: 'dearlove.vn/peony-garden' },
+  { name: 'Magnolia', category: 'floral', catLabel: 'Hoa Lãng Mạn', price: 'Miễn phí', badge: 'MỚI', img: 'screen-Dz_o2gGA.png', url: 'dearlove.vn/magnolia' },
 
-  // Wedding (4)
-  { name: 'Thiệp Hồng', category: 'wedding', catLabel: 'Thiệp Cưới', price: 'Miễn phí', badge: 'MỚI', img: 'screen-Co7xW3hO.png', url: 'vngoweb.com/wedding-1' },
-  { name: 'Ánh Bạc', category: 'wedding', catLabel: 'Thiệp Cưới', price: '299,000đ', badge: null, img: 'screen-BePdfixw.png', url: 'vngoweb.com/wedding-2' },
-  { name: 'Thành Hỷ', category: 'wedding', catLabel: 'Thiệp Cưới', price: '249,000đ', badge: 'MỚI', img: 'screen-BH9TbqLT.png', url: 'vngoweb.com/wedding-3' },
-  { name: 'Di Sản Vĩnh Cửu', category: 'wedding', catLabel: 'Thiệp Cưới', price: '249,000đ', badge: 'MỚI', img: 'screen-DV6BzFar.png', url: 'vngoweb.com/wedding-4' },
+  // Hoàng gia (5)
+  { name: 'Royal Crimson', category: 'royal', catLabel: 'Hoàng Gia', price: '199,000đ', badge: 'MỚI', img: 'screen-oQ5tO4eU.png', url: 'dearlove.vn/royal-crimson' },
+  { name: 'Imperial Gold', category: 'royal', catLabel: 'Hoàng Gia', price: '299,000đ', badge: null, img: 'screen--Nx0rWgk.png', url: 'dearlove.vn/imperial-gold' },
+  { name: 'Diamond Luxe', category: 'royal', catLabel: 'Hoàng Gia', price: '249,000đ', badge: 'MỚI', img: 'screen-B7cs4Wz9.png', url: 'dearlove.vn/diamond-luxe' },
+  { name: 'Majestic Red', category: 'royal', catLabel: 'Hoàng Gia', price: 'Miễn phí', badge: null, img: 'screen-B5gDw83U.png', url: 'dearlove.vn/majestic-red' },
+  { name: 'Royal Garden', category: 'royal', catLabel: 'Hoàng Gia', price: '349,000đ', badge: 'BÁN CHẠY', img: 'screen-BJQ9HPvx.png', url: 'dearlove.vn/royal-garden' },
 
-  // Homestay (7)
-  { name: 'Serenity Villa', category: 'homestay', catLabel: 'Homestay & Villa', price: 'Miễn phí', badge: 'MỚI', img: 'screen-B2dGAM8f.png', url: 'vngoweb.com/villa-1' },
-  { name: 'Serenity Villa Deluxe', category: 'homestay', catLabel: 'Homestay & Villa', price: '299,000đ', badge: null, img: 'screen-B3A56fHh.png', url: 'vngoweb.com/villa-2' },
-  { name: 'Zenith Wilderness - Phong Nha', category: 'homestay', catLabel: 'Homestay & Villa', price: '349,000đ', badge: null, img: 'screen-HY3xN3I1.png', url: 'vngoweb.com/villa-3' },
-  { name: 'Rông Homestay', category: 'homestay', catLabel: 'Homestay & Villa', price: '349,000đ', badge: null, img: 'screen-DQ6nrdS7.png', url: 'vngoweb.com/villa-4' },
-  { name: 'Serenity Sea-View Villa', category: 'homestay', catLabel: 'Homestay & Villa', price: '399,000đ', badge: 'BÁN CHẠY', img: 'screen-Df6qR7x8.png', url: 'vngoweb.com/villa-5' },
-  { name: "H'Mong Cliff Villa", category: 'homestay', catLabel: 'Homestay & Villa', price: '399,000đ', badge: null, img: 'screen-DQwz8IfJ.png', url: 'vngoweb.com/villa-6' },
-  { name: 'The Hill Villas', category: 'homestay', catLabel: 'Homestay & Villa', price: '349,000đ', badge: null, img: 'screen-Buo06aMu.png', url: 'vngoweb.com/villa-7' },
-
-  // Dental (6)
-  { name: 'Nha Khoa Rạng Ngời', category: 'dental', catLabel: 'Nha Khoa', price: 'Miễn phí', badge: 'MỚI', img: 'screen-Cat78Xki.png', url: 'vngoweb.com/dentalClinic-1' },
-  { name: 'Nha Khoa Sáng Tâm', category: 'dental', catLabel: 'Nha Khoa', price: '299,000đ', badge: 'MỚI', img: 'screen-BhIHP8Qk.png', url: 'vngoweb.com/dentalClinic-2' },
-  { name: 'Nha Khoa Tinh Anh', category: 'dental', catLabel: 'Nha Khoa', price: '299,000đ', badge: 'MỚI', img: 'screen-CErosBWf.png', url: 'vngoweb.com/dentalClinic-3' },
-  { name: 'Nha Khoa Tân Kỷ Nguyên', category: 'dental', catLabel: 'Nha Khoa', price: '299,000đ', badge: 'MỚI', img: 'screen-DoNDlm7d.png', url: 'vngoweb.com/dentalClinic-4' },
-  { name: 'Nha Khoa An Nhiên', category: 'dental', catLabel: 'Nha Khoa', price: '299,000đ', badge: 'MỚI', img: 'screen-CHn5BFph.png', url: 'vngoweb.com/dentalClinic-5' },
-  { name: 'Nha Khoa Nụ Cười Vàng', category: 'dental', catLabel: 'Nha Khoa', price: '299,000đ', badge: 'MỚI', img: 'screen-D7snLyZZ.png', url: 'vngoweb.com/dentalClinic-6' },
+  // Cổ điển (4)
+  { name: 'Vintage Rose', category: 'classic', catLabel: 'Cổ Điển', price: '149,000đ', badge: 'BÁN CHẠY', img: 'screen-B2dGAM8f.png', url: 'dearlove.vn/vintage-rose' },
+  { name: 'Heritage Gold', category: 'classic', catLabel: 'Cổ Điển', price: '199,000đ', badge: 'MỚI', img: 'screen-B3A56fHh.png', url: 'dearlove.vn/heritage-gold' },
+  { name: 'Classic Ivory', category: 'classic', catLabel: 'Cổ Điển', price: 'Miễn phí', badge: null, img: 'screen-HY3xN3I1.png', url: 'dearlove.vn/classic-ivory' },
+  { name: 'Victorian Charm', category: 'classic', catLabel: 'Cổ Điển', price: '249,000đ', badge: 'MỚI', img: 'screen-DQ6nrdS7.png', url: 'dearlove.vn/victorian-charm' },
 ]
 
 const FILTERS = [
   { key: 'all', label: 'Tất cả' },
-  { key: 'cafe', label: 'Cafe & Đồ Uống' },
-  { key: 'restaurant', label: 'Nhà Hàng & Quán Ăn' },
-  { key: 'spa', label: 'Spa & Làm Đẹp' },
-  { key: 'gym', label: 'Gym & Thể Thao' },
-  { key: 'wedding', label: 'Thiệp Cưới' },
-  { key: 'homestay', label: 'Homestay & Villa' },
-  { key: 'dental', label: 'Nha Khoa' },
+  { key: 'traditional', label: 'Truyền Thống' },
+  { key: 'modern', label: 'Hiện Đại' },
+  { key: 'minimal', label: 'Tối Giản' },
+  { key: 'floral', label: 'Hoa Lãng Mạn' },
+  { key: 'royal', label: 'Hoàng Gia' },
+  { key: 'classic', label: 'Cổ Điển' },
 ]
 
 const IMAGES_PATH = '/templates-section/images/assets/'
@@ -192,15 +180,14 @@ export default function TemplatesSection() {
         <div className="mx-auto max-w-4xl text-center">
           <div className="flex items-center justify-center gap-3">
             <span className="h-px w-12 bg-[#d9a441]" />
-            <span className="eyebrow">Sản phẩm thật, chạm là chạy</span>
             <span className="h-px w-12 bg-[#d9a441]" />
           </div>
           <h2 className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-.045em] text-[#8d1216] sm:text-5xl lg:text-6xl">
-            Kho giao diện <span className="highlight-gradient font-display italic">tuyệt đẹp</span>,<br className="hidden sm:block" /> sẵn sàng sử dụng
+            Kho mẫu thiệp <span className="highlight-gradient font-display italic">tuyệt đẹp</span>,<br className="hidden sm:block" /> sẵn sàng gửi đi
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-[#7c3f06]/70">
-            Đây là ảnh chụp thật từ các mẫu website đang bán trên vngoweb —
-            di chuột lên mẫu chính giữa để cuộn xem toàn trang.
+            Hơn 30 mẫu thiệp cưới thiết kế tinh tế — chỉ cần chọn mẫu bạn thích,
+            thêm tên, ngày cưới và gửi lời mời đến mọi người.
           </p>
         </div>
         </ScrollReveal>
@@ -326,8 +313,8 @@ export default function TemplatesSection() {
 
         {/* View all link */}
         <div className="mt-12 flex justify-center">
-          <a href="marketplace/index.html" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#8d1216] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#7c3f06]">
-            Xem toàn bộ marketplace
+          <a href="#templatesSection" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#8d1216] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#7c3f06]">
+            Xem toàn bộ mẫu thiệp
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1rem', height: '1rem' }}>
               <path d="M5 12h14" />
               <path d="m12 5 7 7-7 7" />

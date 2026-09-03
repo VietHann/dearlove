@@ -12,21 +12,21 @@ export function CategoriesSection() {
   const [activeCategory, setActiveCategory] = useState('all')
 
   return (
-    <section className="relative z-10 overflow-hidden bg-white px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+    <section className="relative z-10 overflow-hidden bg-white px-4 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-20">
       <span aria-hidden className="pointer-events-none absolute -top-10 left-1/2 size-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(247,201,72,0.18),transparent_70%)] blur-2xl" />
       <ScrollReveal>
         <div className="relative mx-auto max-w-[1320px]">
-          <div className="mb-10 flex flex-col items-center text-center sm:mb-14">
+          <div className="mb-6 flex flex-col items-center text-center sm:mb-14">
             <div className="flex items-center justify-center gap-3">
               <span className="h-px w-10 bg-[#d9a441]/60 sm:w-14" />
               <p className="eyebrow">Khám phá theo dịp</p>
               <span className="h-px w-10 bg-[#d9a441]/60 sm:w-14" />
             </div>
-            <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-[-.045em] text-[#8d1216] sm:text-4xl lg:text-5xl">
+            <h2 className="mt-3 max-w-3xl text-2xl font-semibold leading-[1.05] tracking-[-.045em] text-[#8d1216] sm:text-4xl lg:text-5xl">
               Chọn <span className="highlight-gradient font-display italic">danh mục</span> thiệp bạn yêu thích
             </h2>
           </div>
-          <StaggerContainer staggerDelay={0.06} direction="scale" className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 lg:grid-cols-8">
+          <StaggerContainer staggerDelay={0.06} direction="scale" className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4 lg:grid-cols-8">
             {CATEGORIES.map((c) => (
               <button
                 key={c.id}
