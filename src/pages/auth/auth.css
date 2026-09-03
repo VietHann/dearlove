@@ -1,561 +1,253 @@
 /* ============================================================
-   Auth Split Screen Layout
+   Auth — Centered form with 6 real wedding-template cards
    ============================================================ */
-.auth-split-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh; /* Dynamic viewport height for mobile */
-  width: 100%;
-}
 
-@media (min-width: 1024px) {
-  .auth-split-container {
-    flex-direction: row;
-  }
-}
-
-/* ========== LEFT PANEL: Image ========== */
-.auth-image-panel {
+/* ---- ROOT CONTAINER ---- */
+.auth-root {
   position: relative;
-  width: 100%;
-  height: 280px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  flex-shrink: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(253, 245, 230, 0.95) 0%, #fdf5e6 50%, #f5e6d0 100%);
 }
 
-@media (min-width: 640px) {
-  .auth-image-panel {
-    height: 320px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .auth-image-panel {
-    flex: 1 1 0;
-    height: 100vh;
-    height: 100dvh;
-    width: auto;
-  }
-}
-
-/* Slideshow background */
-.auth-image-slideshow {
-  position: absolute;
+/* Subtle paper texture overlay */
+.auth-root::before {
+  content: '';
+  position: fixed;
   inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
 
-.auth-image-slide {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 1.5s ease-in-out;
-  animation: kenBurns 20s ease-in-out infinite;
-}
-
-.auth-image-slide--active {
-  opacity: 1;
-}
-
-.auth-image-slide:nth-child(1) { animation-delay: 0s; }
-.auth-image-slide:nth-child(2) { animation-delay: 6s; }
-.auth-image-slide:nth-child(3) { animation-delay: 12s; }
-
-@keyframes kenBurns {
-  0%, 100% {
-    transform: scale(1) translate(0, 0);
-  }
-  50% {
-    transform: scale(1.08) translate(-1%, 1%);
-  }
-}
-
-/* Overlays */
-.auth-image-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(141, 18, 22, 0.75) 0%,
-    rgba(124, 63, 6, 0.6) 50%,
-    rgba(45, 35, 20, 0.8) 100%
-  );
+/* ---- WEDDING TEMPLATE CARD MOCKUPS (decorative) ---- */
+.auth-card-mock {
+  position: fixed;
   z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  width: 160px;
+  animation: cardFloat 8s ease-in-out infinite;
+  /* Disable the click-to-open behaviour so they stay purely decorative */
+  cursor: default;
 }
 
-.auth-image-gradient-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
-  z-index: 2;
-}
-
-.auth-image-gradient-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 300px;
-  background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-  z-index: 2;
-}
-
-.auth-image-fade-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background: linear-gradient(to top, rgba(141, 18, 22, 0.3), transparent);
-  z-index: 3;
-}
-
-/* Decorative hearts */
-.auth-deco-hearts {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
+/* Disable inner interactions on the TemplateCard inside */
+.auth-card-mock .group\/template-item-v3 {
+  cursor: default !important;
   pointer-events: none;
 }
 
-.auth-deco-heart {
-  position: absolute;
-  color: rgba(247, 201, 72, 0.4);
+/* Hide hover overlay + preview button + stats on decorative cards */
+.auth-card-mock .group\/template-item-v3 > article > div:last-child,
+.auth-card-mock .group\/template-item-v3 > article > div:nth-child(1) > div > div + div {
+  display: none !important;
 }
 
-.auth-deco-heart--1 {
-  top: 12%;
-  left: 8%;
-  width: 32px;
-  height: 32px;
-  animation: floatHeart1 6s ease-in-out infinite;
+/* Compact card image — disable scroll-on-hover for decorative usage */
+.auth-card-mock .group\/template-item-v3 img {
+  transform: none !important;
+  transition: none !important;
 }
 
-.auth-deco-heart--2 {
-  top: 25%;
-  right: 12%;
-  width: 24px;
-  height: 24px;
-  color: rgba(255, 255, 255, 0.3);
-  animation: floatHeart2 5s ease-in-out infinite;
+/* Keep the rounded card look and gentle drop shadow */
+.auth-card-mock .group\/template-item-v3 > article {
+  pointer-events: none;
+  box-shadow:
+    0 4px 8px rgba(124, 63, 6, 0.08),
+    0 12px 32px rgba(124, 63, 6, 0.12);
 }
 
-.auth-deco-heart--3 {
-  bottom: 35%;
-  left: 15%;
-  width: 18px;
-  height: 18px;
-  color: rgba(247, 201, 72, 0.25);
-  animation: floatHeart3 7s ease-in-out infinite;
+.auth-card-mock .group\/template-item-v3:hover > article {
+  transform: none !important;
+  box-shadow:
+    0 4px 8px rgba(124, 63, 6, 0.08),
+    0 12px 32px rgba(124, 63, 6, 0.12);
 }
 
-.auth-deco-heart--4 {
-  bottom: 20%;
-  right: 20%;
-  width: 28px;
-  height: 28px;
-  color: rgba(255, 255, 255, 0.2);
-  animation: floatHeart4 5.5s ease-in-out infinite;
+/* Position the 6 cards around the centered form */
+.auth-card-1 {
+  top: 4%;
+  left: 3%;
+  transform: rotate(-7deg);
+  animation-delay: 0s;
 }
 
-@keyframes floatHeart1 {
-  0%, 100% { transform: translateY(0) rotate(-5deg); }
-  50% { transform: translateY(-20px) rotate(5deg); }
+.auth-card-2 {
+  top: 3%;
+  right: 3%;
+  transform: rotate(6deg);
+  animation-delay: -1.5s;
 }
 
-@keyframes floatHeart2 {
-  0%, 100% { transform: translateY(0) rotate(5deg); }
-  50% { transform: translateY(-15px) rotate(-5deg); }
+.auth-card-3 {
+  top: 38%;
+  right: 1%;
+  transform: rotate(4deg);
+  animation-delay: -3s;
 }
 
-@keyframes floatHeart3 {
-  0%, 100% { transform: translateY(0) rotate(-3deg); }
-  50% { transform: translateY(-12px) rotate(3deg); }
+.auth-card-4 {
+  bottom: 5%;
+  right: 4%;
+  transform: rotate(-5deg);
+  animation-delay: -4.5s;
 }
 
-@keyframes floatHeart4 {
-  0%, 100% { transform: translateY(0) rotate(3deg); }
-  50% { transform: translateY(-18px) rotate(-3deg); }
+.auth-card-5 {
+  bottom: 5%;
+  left: 4%;
+  transform: rotate(6deg);
+  animation-delay: -6s;
 }
 
-/* Sparkles */
-.auth-deco-sparkle {
-  position: absolute;
-  color: rgba(247, 201, 72, 0.6);
-  z-index: 4;
+.auth-card-6 {
+  top: 38%;
+  left: 1%;
+  transform: rotate(-5deg);
+  animation-delay: -7.5s;
 }
 
-.auth-deco-sparkle--1 {
-  top: 18%;
-  right: 25%;
-  width: 20px;
-  height: 20px;
-  animation: sparkleRotate 4s ease-in-out infinite;
+/* Floating animation */
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0) rotate(var(--card-rotate, 0deg)); }
+  50% { transform: translateY(-8px) rotate(var(--card-rotate, 0deg)); }
 }
 
-.auth-deco-sparkle--2 {
-  bottom: 30%;
-  left: 10%;
-  width: 16px;
-  height: 16px;
-  color: rgba(255, 255, 255, 0.4);
-  animation: sparkleRotate 5s ease-in-out infinite 1s;
-}
+/* Per-card static rotation (referenced in animation) */
+.auth-card-1 { --card-rotate: -7deg; }
+.auth-card-2 { --card-rotate: 6deg; }
+.auth-card-3 { --card-rotate: 4deg; }
+.auth-card-4 { --card-rotate: -5deg; }
+.auth-card-5 { --card-rotate: 6deg; }
+.auth-card-6 { --card-rotate: -5deg; }
 
-@keyframes sparkleRotate {
-  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.6; }
-  50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
-}
-
-/* Image content */
-.auth-image-content {
+/* ---- CENTER FORM ---- */
+.auth-center {
   position: relative;
-  z-index: 5;
+  z-index: 10;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 100%;
-  padding: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .auth-image-content {
-    padding: 2rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .auth-image-content {
-    padding: 2.5rem 3rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .auth-image-content {
-    padding: 3rem 4rem;
-  }
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem 1rem;
 }
 
 /* Logo */
-.auth-brand-logo {
+.auth-logo {
   display: block;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  transition: transform 0.2s ease;
 }
 
-@media (min-width: 1024px) {
-  .auth-brand-logo {
-    margin-bottom: 2.5rem;
-  }
+.auth-logo:hover {
+  transform: scale(1.03);
 }
 
 .auth-logo-img {
   height: 44px;
   width: auto;
-  filter: brightness(0) invert(1);
-}
-
-@media (min-width: 1024px) {
-  .auth-logo-img {
-    height: 56px;
-  }
-}
-
-/* Heading */
-.auth-image-heading {
-  margin-bottom: 1.5rem;
-}
-
-@media (min-width: 1024px) {
-  .auth-image-heading {
-    margin-bottom: 2rem;
-  }
-}
-
-.auth-image-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: #ffffff;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-  margin: 0;
-}
-
-@media (min-width: 640px) {
-  .auth-image-title {
-    font-size: 1.875rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .auth-image-title {
-    font-size: 2.25rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .auth-image-title {
-    font-size: 2.75rem;
-  }
-}
-
-.auth-title-highlight {
-  background: linear-gradient(90deg, #f7c948, #d9a441, #f7c948);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmerGold 3s linear infinite;
-}
-
-@keyframes shimmerGold {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
-
-/* Features - hide on mobile for space */
-.auth-image-features {
-  display: none;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .auth-image-features {
-    display: flex;
-  }
-}
-
-.auth-feature-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: rgba(255, 255, 255, 0.95);
-  font-family: 'Be Vietnam Pro', sans-serif;
-  font-size: 0.9375rem;
-  font-weight: 500;
-}
-
-.auth-feature-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgba(217, 164, 65, 0.9);
-  color: #8d1216;
-  flex-shrink: 0;
-}
-
-/* Testimonial - hide on smaller screens */
-.auth-testimonial {
-  display: none;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  max-width: 360px;
-}
-
-@media (min-width: 1280px) {
-  .auth-testimonial {
-    display: block;
-  }
-}
-
-.auth-testimonial-text {
-  font-family: 'Be Vietnam Pro', sans-serif;
-  font-size: 0.875rem;
-  font-style: italic;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.95);
-  margin-bottom: 1rem;
-}
-
-.auth-testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.auth-testimonial-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(247, 201, 72, 0.5);
-}
-
-.auth-testimonial-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.auth-testimonial-name {
-  font-family: 'Be Vietnam Pro', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.auth-testimonial-date {
-  font-family: 'Be Vietnam Pro', sans-serif;
-  font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* Photo credits */
-.auth-photo-credits {
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.75rem;
-  z-index: 6;
-  font-size: 0.625rem;
-  color: rgba(255, 255, 255, 0.4);
-  font-family: 'Be Vietnam Pro', sans-serif;
-}
-
-/* ========== RIGHT PANEL: Form ========== */
-.auth-form-panel {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, #fcfbf8 0%, #fdf2e3 100%);
-  padding: 1.5rem 1rem;
-  min-height: 0;
-}
-
-@media (min-width: 640px) {
-  .auth-form-panel {
-    padding: 2rem 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .auth-form-panel {
-    flex: 0 0 480px;
-    max-width: 480px;
-    padding: 1.5rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .auth-form-panel {
-    flex: 0 0 520px;
-    max-width: 520px;
-  }
-}
-
-.auth-form-container {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Mobile header with logo */
-.auth-mobile-header {
-  display: none;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-}
-
-@media (max-width: 1023px) {
-  .auth-mobile-header {
-    display: flex;
-  }
-}
-
-.auth-mobile-logo img {
-  height: 40px;
-  width: auto;
 }
 
 /* Form card */
 .auth-form-card {
+  width: 100%;
   background: #ffffff;
-  border-radius: 1.25rem;
+  border-radius: 20px;
   box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 10px 30px -5px rgba(124, 63, 6, 0.1),
-    0 20px 50px -10px rgba(124, 63, 6, 0.15);
-  padding: 1.5rem 1.25rem;
-  border: 1px solid rgba(217, 164, 65, 0.1);
+    0 2px 4px rgba(124, 63, 6, 0.04),
+    0 8px 24px rgba(124, 63, 6, 0.08),
+    0 24px 60px rgba(124, 63, 6, 0.10);
+  padding: 1.75rem 1.5rem 1.5rem;
+  border: 1px solid rgba(217, 164, 65, 0.15);
 }
 
-@media (min-width: 640px) {
-  .auth-form-card {
-    padding: 2rem 1.75rem;
-    border-radius: 1.5rem;
-  }
+/* Brand tagline */
+.auth-brand-tagline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #a8a29e;
+  margin: 0 0 1.25rem;
+  letter-spacing: 0.3px;
 }
 
-@media (min-width: 1024px) {
-  .auth-form-card {
-    padding: 2rem 1.75rem;
-  }
+.auth-brand-heart {
+  color: #ef4444;
+  animation: heartPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
 
 /* Tab Switcher */
 .auth-tabs {
   display: flex;
-  gap: 0.25rem;
-  background: #fdf2e3;
-  padding: 0.25rem;
-  border-radius: 9999px;
-  margin-bottom: 1.5rem;
+  gap: 4px;
+  background: #fef7f0;
+  padding: 4px;
+  border-radius: 50px;
+  margin-bottom: 1.25rem;
 }
 
 .auth-tab {
   flex: 1;
-  padding: 0.5rem 0.75rem;
+  padding: 8px 12px;
   font-size: 0.8125rem;
   font-weight: 600;
-  border-radius: 9999px;
+  border-radius: 50px;
   border: none;
   background: transparent;
-  color: #7c3f06;
+  color: #a8a29e;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
-@media (min-width: 640px) {
-  .auth-tab {
-    padding: 0.625rem 1rem;
-    font-size: 0.875rem;
-  }
-}
-
 .auth-tab:hover:not(.auth-tab--active) {
-  color: #8d1216;
+  color: #7c3f06;
 }
 
 .auth-tab--active {
   background: #ffffff;
   color: #8d1216;
-  box-shadow: 0 2px 8px rgba(124, 63, 6, 0.12);
+  box-shadow: 0 1px 6px rgba(124, 63, 6, 0.1);
+}
+
+/* Form heading */
+.auth-form-title {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #3d1a00;
+  margin: 0 0 4px;
+  text-align: center;
+}
+
+.auth-form-subtitle {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 0.8125rem;
+  color: #a8a29e;
+  margin: 0 0 1.25rem;
+  text-align: center;
 }
 
 /* Form Elements */
 .auth-form-group {
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 640px) {
-  .auth-form-group {
-    margin-bottom: 1.25rem;
-  }
+  margin-bottom: 0.875rem;
 }
 
 .auth-label {
@@ -563,7 +255,7 @@
   font-size: 0.8125rem;
   font-weight: 600;
   color: #7c3f06;
-  margin-bottom: 0.375rem;
+  margin-bottom: 6px;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
@@ -573,26 +265,19 @@
 
 .auth-input {
   width: 100%;
-  padding: 0.625rem 0.875rem;
+  padding: 10px 14px;
   font-size: 0.875rem;
   border: 1.5px solid rgba(217, 164, 65, 0.3);
-  border-radius: 0.625rem;
-  background: #ffffff;
-  color: #7c3f06;
+  border-radius: 10px;
+  background: #fff;
+  color: #3d1a00;
   transition: all 0.25s ease;
   font-family: 'Be Vietnam Pro', sans-serif;
-}
-
-@media (min-width: 640px) {
-  .auth-input {
-    padding: 0.75rem 1rem;
-    font-size: 0.9375rem;
-    border-radius: 0.75rem;
-  }
+  box-sizing: border-box;
 }
 
 .auth-input::placeholder {
-  color: #a8a29e;
+  color: #c4b8a8;
 }
 
 .auth-input:hover {
@@ -602,7 +287,7 @@
 .auth-input:focus {
   outline: none;
   border-color: #d9a441;
-  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.15);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.12);
 }
 
 .auth-input--error {
@@ -610,24 +295,23 @@
 }
 
 .auth-input--error:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 /* Password toggle */
 .auth-password-toggle {
   position: absolute;
-  right: 0.625rem;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #a8a29e;
+  color: #c4b8a8;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 4px;
   transition: color 0.2s ease;
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .auth-password-toggle:hover {
@@ -638,7 +322,7 @@
 .auth-error {
   font-size: 0.75rem;
   color: #ef4444;
-  margin-top: 0.375rem;
+  margin-top: 4px;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
@@ -646,7 +330,7 @@
 .auth-forgot-row {
   display: flex;
   justify-content: flex-end;
-  margin: -0.5rem 0 1rem;
+  margin: -4px 0 12px;
 }
 
 .auth-forgot-link {
@@ -666,32 +350,29 @@
 /* Submit Button */
 .auth-submit-btn {
   width: 100%;
-  padding: 0.75rem 1.5rem;
+  padding: 11px 1.5rem;
   font-size: 0.9375rem;
   font-weight: 700;
   font-family: 'Be Vietnam Pro', sans-serif;
   border: none;
-  border-radius: 9999px;
+  border-radius: 50px;
   background: linear-gradient(135deg, #8d1216 0%, #b91c1c 50%, #8d1216 100%);
   background-size: 200% 100%;
   background-position: 0% 0%;
   color: #ffffff;
   cursor: pointer;
   transition: all 0.35s ease;
-  box-shadow: 0 4px 15px -2px rgba(141, 18, 22, 0.35);
-}
-
-@media (min-width: 640px) {
-  .auth-submit-btn {
-    padding: 0.875rem 1.5rem;
-    font-size: 1rem;
-  }
+  box-shadow: 0 4px 14px rgba(141, 18, 22, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .auth-submit-btn:hover {
   background-position: 100% 0%;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px -4px rgba(141, 18, 22, 0.45);
+  box-shadow: 0 8px 24px rgba(141, 18, 22, 0.4);
 }
 
 .auth-submit-btn:active {
@@ -704,12 +385,28 @@
   transform: none;
 }
 
+.auth-btn-loading,
+.auth-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-spin {
+  animation: spinOnce 1s linear infinite;
+}
+
+@keyframes spinOnce {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Social Divider */
 .auth-social-divider {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin: 1.25rem 0;
+  gap: 12px;
+  margin: 1rem 0;
 }
 
 .auth-social-divider::before,
@@ -722,7 +419,7 @@
 
 .auth-social-divider-text {
   font-size: 0.75rem;
-  color: #a8a29e;
+  color: #c4b8a8;
   font-family: 'Be Vietnam Pro', sans-serif;
   white-space: nowrap;
 }
@@ -730,7 +427,7 @@
 /* Social Buttons */
 .auth-social-buttons {
   display: flex;
-  gap: 0.625rem;
+  gap: 10px;
 }
 
 .auth-social-btn {
@@ -738,49 +435,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 0.75rem;
+  gap: 6px;
+  padding: 9px 10px;
   font-size: 0.8125rem;
   font-weight: 600;
   border: 1.5px solid rgba(217, 164, 65, 0.2);
-  border-radius: 0.625rem;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.25s ease;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
-@media (min-width: 640px) {
-  .auth-social-btn {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    border-radius: 0.75rem;
-  }
+.auth-social-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .auth-social-btn:hover {
   transform: translateY(-2px);
 }
 
-.auth-social-btn svg {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
-@media (min-width: 640px) {
-  .auth-social-btn svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-}
-
 .auth-social-btn--google {
-  background: linear-gradient(135deg, #ffffff, #fafafa);
-  color: #7c3f06;
+  background: #ffffff;
+  color: #3d1a00;
 }
 
 .auth-social-btn--google:hover {
-  box-shadow: 0 6px 20px -4px rgba(66, 133, 244, 0.3);
-  border-color: transparent;
+  box-shadow: 0 6px 18px rgba(66, 133, 244, 0.2);
+  border-color: #4285f4;
 }
 
 .auth-social-btn--facebook {
@@ -790,12 +473,12 @@
 }
 
 .auth-social-btn--facebook:hover {
-  box-shadow: 0 6px 20px -4px rgba(24, 119, 242, 0.4);
+  box-shadow: 0 6px 18px rgba(24, 119, 242, 0.35);
 }
 
 /* Footer */
 .auth-footer {
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   text-align: center;
 }
 
@@ -803,19 +486,14 @@
   font-size: 0.8125rem;
   color: #7c3f06;
   font-family: 'Be Vietnam Pro', sans-serif;
-}
-
-@media (min-width: 640px) {
-  .auth-footer-text {
-    font-size: 0.875rem;
-  }
+  margin: 0;
 }
 
 .auth-switch-link {
   color: #d9a441;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
   background: none;
   border: none;
   cursor: pointer;
@@ -824,14 +502,15 @@
 }
 
 .auth-switch-link:hover {
-  color: #f7c948;
+  color: #8d1216;
 }
 
 .auth-terms-text {
   font-size: 0.75rem;
-  color: #a8a29e;
+  color: #c4b8a8;
   font-family: 'Be Vietnam Pro', sans-serif;
   line-height: 1.5;
+  margin: 0 0 6px;
 }
 
 .auth-terms-link {
@@ -852,14 +531,14 @@
 
 .auth-help-text {
   font-size: 0.8125rem;
-  color: #7c3f06;
+  color: #a8a29e;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 .auth-help-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
   color: #8d1216;
   font-weight: 600;
   text-decoration: none;
@@ -870,35 +549,93 @@
   color: #d9a441;
 }
 
-/* ========== Mobile Compact Mode (small height) ========== */
-@media (max-height: 700px) and (max-width: 639px) {
-  .auth-image-panel {
-    height: 200px;
+/* ---- RESPONSIVE ---- */
+
+/* Large desktop: cards visible, normal size */
+@media (min-width: 1440px) {
+  .auth-card-mock { width: 180px; }
+  .auth-center { max-width: 460px; }
+}
+
+/* Desktop: cards slightly smaller */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .auth-card-mock { width: 150px; }
+  .auth-card-1 { top: 3%; left: 2%; }
+  .auth-card-2 { top: 2%; right: 2%; }
+  .auth-card-3 { top: 38%; right: 0.5%; }
+  .auth-card-4 { bottom: 4%; right: 2.5%; }
+  .auth-card-5 { bottom: 4%; left: 2.5%; }
+  .auth-card-6 { top: 38%; left: 0.5%; }
+}
+
+/* Tablet landscape: cards even smaller */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .auth-card-mock { width: 130px; }
+  .auth-card-1 { top: 2%; left: 1.5%; }
+  .auth-card-2 { top: 2%; right: 1.5%; }
+  .auth-card-3 { top: 35%; right: 0.3%; }
+  .auth-card-4 { bottom: 3%; right: 1.5%; }
+  .auth-card-5 { bottom: 3%; left: 1.5%; }
+  .auth-card-6 { top: 35%; left: 0.3%; }
+}
+
+/* Tablet portrait / small desktop: hide some cards, keep just outer 4 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .auth-card-mock { width: 130px; }
+  /* Hide the middle-side cards (3 and 6) to reduce clutter */
+  .auth-card-3, .auth-card-6 { display: none; }
+  .auth-card-1 { top: 2%; left: 1%; }
+  .auth-card-2 { top: 2%; right: 1%; }
+  .auth-card-4 { bottom: 3%; right: 1%; }
+  .auth-card-5 { bottom: 3%; left: 1%; }
+}
+
+/* Mobile: hide all cards, full width form */
+@media (max-width: 767px) {
+  .auth-card-mock {
+    display: none;
+  }
+
+  .auth-root {
+    background: linear-gradient(160deg, #fdf5e6 0%, #fef7f0 50%, #fdf5e6 100%);
+  }
+
+  .auth-center {
+    padding: 1rem 0.75rem;
+    max-width: 100%;
+  }
+
+  .auth-logo-img {
+    height: 40px;
   }
 
   .auth-form-card {
-    padding: 1.25rem 1rem;
+    border-radius: 16px;
+    padding: 1.5rem 1.25rem 1.25rem;
   }
 
-  .auth-tabs {
+  .auth-form-title {
+    font-size: 1.125rem;
+  }
+
+  .auth-brand-tagline {
     margin-bottom: 1rem;
-  }
-
-  .auth-form-group {
-    margin-bottom: 0.875rem;
-  }
-
-  .auth-social-divider {
-    margin: 1rem 0;
   }
 }
 
-/* ========== Reduced Motion ========== */
+/* ---- REDUCED MOTION ---- */
 @media (prefers-reduced-motion: reduce) {
-  .auth-tab,
-  .auth-input,
+  .auth-card-mock {
+    animation: none;
+  }
+
+  .auth-brand-heart {
+    animation: none;
+  }
+
+  .auth-submit-btn,
   .auth-social-btn,
-  .auth-submit-btn {
+  .auth-tab {
     transition-duration: 0.01ms;
   }
 
@@ -907,17 +644,7 @@
     transform: none;
   }
 
-  .auth-deco-heart,
-  .auth-deco-sparkle {
-    animation: none;
-  }
-
-  .auth-image-slide {
-    animation: none;
-    opacity: 1;
-  }
-
-  .auth-title-highlight {
-    animation: none;
+  .auth-logo:hover {
+    transform: none;
   }
 }

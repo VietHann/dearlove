@@ -3,17 +3,17 @@ import { Link } from 'react-router-dom'
 import { Heart, Eye, EyeOff, Loader2, ArrowRight, Phone } from 'lucide-react'
 import { IMAGES } from '../../lib/constants'
 import { SOCIAL_PROVIDERS, LOGIN_FIELDS, REGISTER_FIELDS, AUTH_PAGE_CONTENT } from './authData'
+import { templates } from '../templates/templatesData'
+import { TemplateCard } from '../templates/TemplateCard'
 
 import './auth.css'
 
 /**
- * Auth — centered form with 6 decorative wedding-card mockups surrounding it.
+ * Auth — centered form with 6 real wedding template cards surrounding it.
  *
- * Layout:
- * - Full-page soft gradient background
- * - 6 wedding card mockups (CSS-only, no images) positioned around center
- * - Form card locked in the middle
- * - Mobile: cards scale down / hide, form takes full width
+ * Picks the 6 wedding templates with the highest viewCount from
+ * `templatesData`, renders each via the shared `TemplateCard` component,
+ * and positions them around the centered login/register form.
  */
 export default function Auth() {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
@@ -79,101 +79,20 @@ export default function Auth() {
   const currentFields = activeTab === 'login' ? LOGIN_FIELDS : REGISTER_FIELDS
   const content = AUTH_PAGE_CONTENT[activeTab]
 
+  // Pick 6 wedding templates with the highest viewCount
+  const featuredCards = [...templates]
+    .filter(t => t.category === 'wedding')
+    .sort((a, b) => b.viewCount - a.viewCount)
+    .slice(0, 6)
+
   return (
     <div className="auth-root">
-      {/* ===== WEDDING CARD MOCKUPS (decorative background) ===== */}
-
-      {/* Card 1 — Top Left: Classic Red & Gold Vietnamese */}
-      <div className="auth-card-mock auth-card-1" aria-hidden="true">
-        <div className="acm-border-top" />
-        <div className="acm-inner">
-          <div className="acm-ornament acm-ornament--top">✦ ✦ ✦</div>
-          <p className="acm-pre">Save the Date</p>
-          <div className="acm-couple">Minh & Lan</div>
-          <div className="acm-date">14 · 02 · 2026</div>
-          <div className="acm-divider" />
-          <p className="acm-venue">Nhà hàng Thiên Đường</p>
-          <p className="acm-address">123 Nguyễn Trãi, Q.1, TP.HCM</p>
-          <div className="acm-ornament acm-ornament--bottom">♥</div>
+      {/* ===== 6 REAL WEDDING TEMPLATE CARDS (decorative background) ===== */}
+      {featuredCards.map((template, index) => (
+        <div key={template.id} className={`auth-card-mock auth-card-${index + 1}`}>
+          <TemplateCard template={template} />
         </div>
-        <div className="acm-border-bottom" />
-      </div>
-
-      {/* Card 2 — Top Right: Blush Pink & Floral */}
-      <div className="auth-card-mock auth-card-2" aria-hidden="true">
-        <div className="acm-inner">
-          <div className="acm-rose-border" />
-          <p className="acm-pre acm-pre--blush">We're getting married</p>
-          <div className="acm-couple acm-couple--blush">Thu & Khoa</div>
-          <div className="acm-divider acm-divider--blush" />
-          <p className="acm-venue acm-venue--blush">Garden Villa Resort</p>
-          <div className="acm-date acm-date--blush">08 · 03 · 2026</div>
-          <div className="acm-ornament acm-ornament--roses">🌸 🌷 🌹</div>
-        </div>
-      </div>
-
-      {/* Card 3 — Right Middle: Burgundy & Botanical */}
-      <div className="auth-card-mock auth-card-3" aria-hidden="true">
-        <div className="acm-inner">
-          <div className="acm-monogram acm-monogram--dark">TK</div>
-          <p className="acm-pre acm-pre--dark">Together with their families</p>
-          <div className="acm-couple acm-couple--dark">Trung & Kim</div>
-          <div className="acm-divider acm-divider--dark" />
-          <div className="acm-details">
-            <span>Ngày</span>
-            <strong>20 · 04 · 2026</strong>
-          </div>
-          <div className="acm-details">
-            <span>Địa điểm</span>
-            <strong>Palm Garden</strong>
-          </div>
-          <div className="acm-ornament acm-ornament--botanical">🍃 ✦ 🍂</div>
-        </div>
-      </div>
-
-      {/* Card 4 — Bottom Right: Navy & Rose Gold Modern */}
-      <div className="auth-card-mock auth-card-4" aria-hidden="true">
-        <div className="acm-inner">
-          <div className="acm-pre acm-pre--navy">Formal Announcement</div>
-          <div className="acm-initials">H & A</div>
-          <div className="acm-date acm-date--navy">25 · 05 · 2026</div>
-          <div className="acm-divider acm-divider--navy" />
-          <p className="acm-venue acm-venue--navy">Saigon Marriott Hotel</p>
-          <p className="acm-address acm-address--navy"> Đường Nguyễn Huệ, Q.1</p>
-          <div className="acm-ornament acm-ornament--gold">✦ ✦ ✦</div>
-        </div>
-      </div>
-
-      {/* Card 5 — Bottom Left: Sage Green & Botanical */}
-      <div className="auth-card-mock auth-card-5" aria-hidden="true">
-        <div className="acm-inner">
-          <div className="acm-ornament acm-ornament--leaf">🌿 ✦ 🌿</div>
-          <p className="acm-pre acm-pre--sage">Wedding Celebration</p>
-          <div className="acm-couple acm-couple--sage">Nam & Phương</div>
-          <div className="acm-divider acm-divider--sage" />
-          <div className="acm-details acm-details--sage">
-            <span>Ngày</span>
-            <strong>10 · 06 · 2026</strong>
-          </div>
-          <div className="acm-details acm-details--sage">
-            <span>Địa điểm</span>
-            <strong>Vườn HOA Villa</strong>
-          </div>
-        </div>
-      </div>
-
-      {/* Card 6 — Left Middle: Purple & Gold Luxury */}
-      <div className="auth-card-mock auth-card-6" aria-hidden="true">
-        <div className="acm-inner">
-          <div className="acm-ornament acm-ornament--crown">♕</div>
-          <p className="acm-pre acm-pre--purple">You're invited to</p>
-          <div className="acm-couple acm-couple--purple">Văn & My</div>
-          <div className="acm-divider acm-divider--purple" />
-          <p className="acm-venue acm-venue--purple">Riverside Palace</p>
-          <div className="acm-date acm-date--purple">18 · 07 · 2026</div>
-          <div className="acm-ornament acm-ornament--sparkle">✦ ♥ ✦</div>
-        </div>
-      </div>
+      ))}
 
       {/* ===== CENTER FORM CARD ===== */}
       <main className="auth-center">
