@@ -98,7 +98,7 @@ export default function ImageStreamHeroSection() {
   return (
     <section
       id="feedback"
-      className="relative z-10 overflow-hidden bg-[#fcfbf8] px-5 py-12 sm:px-8 lg:px-12 lg:py-16"
+      className="relative z-10 overflow-hidden bg-[#fcfbf8] px-4 py-10 sm:px-8 sm:py-12 lg:px-12 lg:py-16"
     >
       {/* Ambient glows */}
       <span
@@ -113,18 +113,18 @@ export default function ImageStreamHeroSection() {
       <div className="relative mx-auto max-w-[1320px]">
         {/* ── Heading pushed to top ─────────────────────────────── */}
         <ScrollReveal>
-          <div className="mb-10 text-center lg:mb-14">
+          <div className="mb-6 text-center lg:mb-14">
             <div className="flex items-center justify-center gap-3">
               <span className="h-px w-10 bg-[#d9a441]/60 sm:w-14" />
               <p className="eyebrow">Từ khách hàng thật</p>
               <span className="h-px w-10 bg-[#d9a441]/60 sm:w-14" />
             </div>
-            <h2 className="mt-4 text-3xl font-semibold leading-[1.05] tracking-[-.045em] text-[#8d1216] sm:text-4xl lg:text-5xl">
+            <h2 className="mt-3 text-2xl font-semibold leading-[1.05] tracking-[-.045em] text-[#8d1216] sm:mt-4 sm:text-4xl lg:text-5xl">
               Những khoảnh khắc{' '}
               <span className="highlight-gradient font-display italic">đáng nhớ</span>{' '}
               được chia sẻ.
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[#7c3f06]/70 sm:text-lg">
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[#7c3f06]/70 sm:mt-4 sm:text-base sm:leading-7 lg:text-lg">
               Hàng nghìn khách hàng đã gửi ảnh thực tế sau khi sử dụng
               thiệp Dearlove cho ngày đặc biệt của họ.
             </p>
@@ -134,8 +134,8 @@ export default function ImageStreamHeroSection() {
         {/* ── Photo carousel with corridor behind ───────────────── */}
         <ScrollReveal delay={0.1} distance={40}>
           <div className="relative overflow-hidden rounded-3xl border border-[#d9a441]/25 bg-[#fdf2e3] shadow-soft">
-            {/* 3D corridor behind the carousel */}
-            <div className="absolute inset-0 opacity-80">
+            {/* 3D corridor behind the carousel — hidden on mobile for perf */}
+            <div className="absolute inset-0 opacity-80 hidden lg:block">
               <ImageStreamHero
                 images={CORRIDOR_IMAGES}
                 cards={9}
@@ -144,17 +144,19 @@ export default function ImageStreamHeroSection() {
                 className="h-full w-full"
               />
             </div>
+            {/* Mobile: subtle solid bg instead of 3D effect */}
+            <div className="absolute inset-0 lg:hidden bg-gradient-to-br from-[#fdf2e3] via-[#fcfbf8] to-[#fdf2e3]" />
 
             {/* Top / bottom edge fade for readability */}
             <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b from-[#fdf2e3] via-[#fdf2e3]/60 to-transparent" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t from-[#fdf2e3] via-[#fdf2e3]/60 to-transparent" />
 
             {/* Foreground photo stage */}
-            <div className="relative z-20 flex min-h-[540px] flex-col items-center justify-center px-6 py-10 sm:px-12 lg:px-20">
+            <div className="relative z-20 flex min-h-[320px] flex-col items-center justify-center px-3 py-5 sm:min-h-[440px] sm:px-8 lg:min-h-[540px] lg:px-20">
               {/* Main photo card */}
               <div
                 key={active}
-                className="relative w-full max-w-sm overflow-hidden rounded-2xl shadow-xl sm:max-w-md lg:max-w-lg"
+                className="relative w-full max-w-[320px] overflow-hidden rounded-2xl shadow-xl sm:max-w-sm lg:max-w-lg"
                 style={{ animation: 'photoReveal 500ms ease both' }}
               >
                 <img
@@ -167,33 +169,33 @@ export default function ImageStreamHeroSection() {
                 <div
                   className={`absolute inset-0 bg-gradient-to-t ${current.tint} to-transparent`}
                 />
-                <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5 text-white">
                   <div className="flex items-center gap-2">
                     <span className="rounded-full bg-white/25 p-1 backdrop-blur">
-                      <current.icon size={14} />
+                      <current.icon size={12} className="sm:size-4" />
                     </span>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-white/80">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-white/80 sm:text-xs">
                       {current.event}
                     </p>
                   </div>
-                  <p className="mt-1 text-xl font-semibold leading-tight">
+                  <p className="mt-0.5 text-base font-semibold leading-tight sm:mt-1 sm:text-xl">
                     {current.customer}
                   </p>
                 </div>
               </div>
 
               {/* Navigation controls */}
-              <div className="mt-8 flex items-center gap-5">
+              <div className="mt-4 flex items-center gap-3 sm:mt-8 sm:gap-5">
                 <button
                   type="button"
                   aria-label="Ảnh trước"
                   onClick={() => go(-1)}
-                  className="grid size-11 place-items-center rounded-full border border-[#d9a441]/40 bg-[#fcfbf8]/90 text-[#8d1216] shadow-sm backdrop-blur transition hover:border-[#d9a441] hover:bg-white"
+                  className="grid size-9 place-items-center rounded-full border border-[#d9a441]/40 bg-[#fcfbf8]/90 text-[#8d1216] shadow-sm backdrop-blur transition hover:border-[#d9a441] hover:bg-white sm:size-11"
                 >
-                  <ChevronLeft size={18} />
+                  <ChevronLeft size={16} className="sm:size-5" />
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   {FEEDBACK_PHOTOS.map((_, i) => (
                     <button
                       key={i}
@@ -202,8 +204,8 @@ export default function ImageStreamHeroSection() {
                       onClick={() => setActive(i)}
                       className={`rounded-full transition-all ${
                         i === active
-                          ? 'size-2.5 bg-[#8d1216]'
-                          : 'size-2 bg-[#8d1216]/30 hover:bg-[#8d1216]/60'
+                          ? 'size-2 bg-[#8d1216] sm:size-2.5'
+                          : 'size-1.5 bg-[#8d1216]/30 hover:bg-[#8d1216]/60 sm:size-2'
                       }`}
                     />
                   ))}
@@ -213,14 +215,14 @@ export default function ImageStreamHeroSection() {
                   type="button"
                   aria-label="Ảnh tiếp"
                   onClick={() => go(1)}
-                  className="grid size-11 place-items-center rounded-full border border-[#d9a441]/40 bg-[#fcfbf8]/90 text-[#8d1216] shadow-sm backdrop-blur transition hover:border-[#d9a441] hover:bg-white"
+                  className="grid size-9 place-items-center rounded-full border border-[#d9a441]/40 bg-[#fcfbf8]/90 text-[#8d1216] shadow-sm backdrop-blur transition hover:border-[#d9a441] hover:bg-white sm:size-11"
                 >
-                  <ChevronRight size={18} />
+                  <ChevronRight size={16} className="sm:size-5" />
                 </button>
               </div>
 
-              {/* Counter */}
-              <p className="mt-3 text-xs font-medium text-[#7c3f06]/60">
+              {/* Counter — hidden on mobile to save space */}
+              <p className="mt-2 hidden text-xs font-medium text-[#7c3f06]/60 sm:block">
                 {active + 1} / {total}
               </p>
             </div>
@@ -229,7 +231,7 @@ export default function ImageStreamHeroSection() {
 
         {/* ── Aggregate stats strip ─────────────────────────────── */}
         <ScrollReveal delay={0.2}>
-          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-5">
+          <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-10 sm:grid-cols-4 sm:gap-5">
             {[
               { value: '4.9★', label: 'Đánh giá trung bình', icon: Star },
               { value: '50K+', label: 'Khách hàng tin dùng', icon: Heart },
@@ -238,15 +240,15 @@ export default function ImageStreamHeroSection() {
             ].map(({ value, label, icon: Icon }) => (
               <div
                 key={label}
-                className="rounded-2xl border border-[#d9a441]/20 bg-white px-4 py-4 text-center shadow-soft transition hover:-translate-y-0.5 hover:border-[#d9a441]/50"
+                className="rounded-xl border border-[#d9a441]/20 bg-white px-3 py-3 text-center shadow-soft transition hover:-translate-y-0.5 hover:border-[#d9a441]/50 sm:rounded-2xl sm:border-[#d9a441]/20 sm:px-4 sm:py-4"
               >
                 <div className="flex items-center justify-center gap-1.5">
-                  <Icon size={16} className="text-[#d9a441]" />
-                  <div className="text-xl font-semibold text-[#8d1216] sm:text-2xl">
+                  <Icon size={14} className="text-[#d9a441] sm:size-4" />
+                  <div className="text-lg font-semibold text-[#8d1216] sm:text-2xl">
                     {value}
                   </div>
                 </div>
-                <div className="mt-1 text-xs font-medium text-[#7c3a06]/70">
+                <div className="mt-0.5 text-[10px] font-medium text-[#7c3a06]/70 sm:mt-1 sm:text-xs">
                   {label}
                 </div>
               </div>
