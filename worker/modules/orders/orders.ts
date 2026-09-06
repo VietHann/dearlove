@@ -19,7 +19,7 @@ function requiredText(value: unknown, maxLength: number): string | null {
   return normalized.length > 0 && normalized.length <= maxLength ? normalized : null
 }
 
-async function getSession(request: Request, env: Env) {
+export async function getSession(request: Request, env: Env) {
   return createAuth(env).api.getSession({ headers: request.headers })
 }
 
