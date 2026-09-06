@@ -6,7 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "ENVIRONMENT": "production",
-    "BETTER_AUTH_URL": "https://dearlovevip.lv-viet-vn.workers.dev"
+    "BETTER_AUTH_URL": "https://dearlove.click"
   },
   "secrets": {
     "required": ["BETTER_AUTH_SECRET"]
