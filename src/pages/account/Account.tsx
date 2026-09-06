@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LogOut, UserRound } from 'lucide-react'
 import { authClient } from '../../lib/auth-client'
@@ -6,12 +6,21 @@ import { authClient } from '../../lib/auth-client'
 export default function Account() {
   const navigate = useNavigate()
   const { data: session, isPending } = authClient.useSession()
+  const [orders, setOrders] = useState<Array<{ order_code: string; template_id: string; status: string; payment_status: string; created_at: number }>>([])
 
   useEffect(() => {
     if (!isPending && !session) {
       navigate('/auth?mode=login&returnTo=/account', { replace: true })
     }
   }, [isPending, navigate, session])
+
+  useEffect(() => {
+    if (!session) return
+    fetch('/api/v1/orders', { credentials: 'include' })
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('orders unavailable')))
+      .then(body => setOrders(body.data ?? []))
+      .catch(() => setOrders([]))
+  }, [session])
 
   if (isPending || !session) {
     return (
@@ -53,9 +62,29 @@ export default function Account() {
             <h2 className="mt-4 font-heading text-xl font-semibold text-[#8d1216]">Chọn mẫu thiệp</h2>
             <p className="mt-2 text-sm leading-6 text-[#7c3f06]/70">Khám phá các mẫu đang được Dearlove giới thiệu.</p>
           </Link>
-          <div className="rounded-2xl border border-dashed border-[#d9a441]/30 p-5">
-            <h2 className="font-heading text-xl font-semibold text-[#8d1216]">Đơn hàng của bạn</h2>
-            <p className="mt-2 text-sm leading-6 text-[#7c3f06]/70">Khu vực theo dõi đơn và gửi ảnh sẽ được nối ở bước Order API tiếp theo.</p>
+          <div className="rounded-2xl border border-[#d9a441]/20 p-5 sm:col-span-2">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="font-heading text-xl font-semibold text-[#8d1216]">Đơn hàng của bạn</h2>
+              <span className="rounded-full bg-[#fdf2e3] px-3 py-1 text-xs font-semibold text-[#8d1216]">{orders.length} đơn</span>
+            </div>
+            {orders.length === 0 ? (
+              <p className="mt-3 text-sm leading-6 text-[#7c3f06]/70">Bạn chưa có đơn nào. Hãy chọn một mẫu để bắt đầu.</p>
+            ) : (
+              <div className="mt-4 grid gap-3">
+                {orders.map(order => (
+                  <div key={order.order_code} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[#fdf2e3]/60 px-4 py-3 text-sm">
+                    <div>
+                      <p className="font-semibold text-[#8d1216]">{order.order_code}</p>
+                      <p className="mt-1 text-xs text-[#7c3f06]/65">Mẫu: {order.template_id}</p>
+                    </div>
+                    <div className="text-right text-xs text-[#7c3f06]/70">
+                      <p>{order.status}</p>
+                      <p className="mt-1">Thanh toán: {order.payment_status}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
