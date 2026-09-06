@@ -41,8 +41,8 @@ export default function Templates() {
   }, [selectedCategory, selectedType, selectedSort]);
 
   const handleViewClick = (template: Template) => {
-    window.open(`/preview/${template.id}`, '_blank');
-  };
+    window.location.assign(`/auth?mode=register&template=${encodeURIComponent(template.id)}`)
+  }
 
   return (
     <main className="min-h-screen bg-background">

@@ -8,11 +8,12 @@ interface TemplateCardProps {
 export function TemplateCard({ template, onViewClick }: TemplateCardProps) {
   const handleViewClick = () => {
     if (onViewClick) {
-      onViewClick(template);
-    } else {
-      window.open(`/preview/${template.id}`, '_blank');
+      onViewClick(template)
+      return
     }
-  };
+
+    window.location.assign(`/auth?mode=register&template=${encodeURIComponent(template.id)}`)
+  }
 
   return (
     <div
@@ -50,6 +51,10 @@ export function TemplateCard({ template, onViewClick }: TemplateCardProps) {
           <div className="absolute inset-0 flex items-end justify-center pb-12">
             <button
               className="pointer-events-auto rounded-full border border-[#d9a441]/40 bg-white px-5 py-2 text-sm font-semibold text-[#8d1216] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-gradient-to-r hover:from-[#d9a441] hover:to-[#8d1216] hover:text-white"
+              onClick={event => {
+                event.stopPropagation()
+                handleViewClick()
+              }}
               type="button"
             >
               Xem mẫu

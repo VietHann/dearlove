@@ -235,7 +235,7 @@ export default function TemplatesSection() {
                       className="carousel-3d__slide"
                       style={getSlideStyle(i)}
                     >
-                      <button className="tmpl-card" aria-label={`${t.name} template preview`}>
+                      <button className="tmpl-card" aria-label={`${t.name} template screenshot`} onClick={() => window.location.assign('/templates')}>
                         <div className="tmpl-card__frame">
                           <div className="tmpl-card__topbar">
                             <span className="dot dot--gold" />
@@ -313,7 +313,7 @@ export default function TemplatesSection() {
 
         {/* View all link */}
         <div className="mt-12 flex justify-center">
-          <a href="#templatesSection" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#8d1216] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#7c3f06]">
+          <a href="/templates" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#8d1216] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#7c3f06]">
             Xem toàn bộ mẫu thiệp
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '1rem', height: '1rem' }}>
               <path d="M5 12h14" />
