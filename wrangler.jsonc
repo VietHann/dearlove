@@ -5,8 +5,8 @@
   "compatibility_date": "2026-09-06",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
-    "ENVIRONMENT": "development",
-    "BETTER_AUTH_URL": "http://127.0.0.1:5173"
+    "ENVIRONMENT": "production",
+    "BETTER_AUTH_URL": "https://dearlovevip.lv-viet-vn.workers.dev"
   },
   "secrets": {
     "required": ["BETTER_AUTH_SECRET"]
