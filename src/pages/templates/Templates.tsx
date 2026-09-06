@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { authClient } from '../../lib/auth-client';
 import { TemplatesHero } from './TemplatesHero';
 import { FilterBar } from './CategoryFilter';
 import { TemplatesGrid } from './TemplatesGrid';
@@ -9,6 +10,7 @@ export default function Templates() {
   const [selectedCategory, setSelectedCategory] = useState('wedding');
   const [selectedType, setSelectedType] = useState('all');
   const [selectedSort, setSelectedSort] = useState('recent');
+  const { data: session } = authClient.useSession();
 
   const filteredTemplates = useMemo(() => {
     let result = [...templates];
@@ -41,7 +43,11 @@ export default function Templates() {
   }, [selectedCategory, selectedType, selectedSort]);
 
   const handleViewClick = (template: Template) => {
-    window.location.assign(`/auth?mode=register&template=${encodeURIComponent(template.id)}`)
+    const orderPath = `/order/${encodeURIComponent(template.id)}?templateName=${encodeURIComponent(template.name)}`
+    const target = session
+      ? orderPath
+      : `/auth?mode=register&returnTo=${encodeURIComponent(orderPath)}`
+    window.location.assign(target)
   }
 
   return (
