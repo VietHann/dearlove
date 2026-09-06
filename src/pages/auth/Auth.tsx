@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Heart, Eye, EyeOff, Loader2, ArrowRight, Phone } from 'lucide-react'
 import { IMAGES } from '../../lib/constants'
-import { SOCIAL_PROVIDERS, LOGIN_FIELDS, REGISTER_FIELDS, AUTH_PAGE_CONTENT } from './authData'
+import { authClient } from '../../lib/auth-client'
+import { AUTH_PAGE_CONTENT, LOGIN_FIELDS, REGISTER_FIELDS, SOCIAL_PROVIDERS } from './authData'
 import { templates } from '../templates/templatesData'
 import { TemplateCard } from '../templates/TemplateCard'
 
@@ -70,9 +71,37 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateForm()) return
+
+    const returnTo = searchParams.get('returnTo')
+    const safeReturnTo = returnTo?.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/'
+    setErrors({})
     setIsLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setIsLoading(false)
+
+    try {
+      const response = activeTab === 'login'
+        ? await authClient.signIn.email({
+            email: formData.email.trim(),
+            password: formData.password,
+            callbackURL: safeReturnTo,
+          })
+        : await authClient.signUp.email({
+            name: formData.fullName.trim(),
+            email: formData.email.trim(),
+            password: formData.password,
+            callbackURL: safeReturnTo,
+          })
+
+      if (response.error) {
+        setErrors({ form: response.error.message || 'Thông tin đăng nhập chưa hợp lệ.' })
+        return
+      }
+
+      window.location.assign(safeReturnTo)
+    } catch {
+      setErrors({ form: 'Không thể kết nối tới hệ thống. Vui lòng thử lại.' })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleSocialLogin = () => {
