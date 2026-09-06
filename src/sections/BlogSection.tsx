@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { ScrollReveal, StaggerContainer } from '../components'
 import { DarkButton } from '../components/ui/DarkButton'
@@ -18,8 +19,8 @@ export function BlogSection() {
         <div className="mx-auto max-w-[1320px]">
           <Heading eyebrow="Cẩm nang thiệp">Mẹo hay & cảm hứng thiết kế.</Heading>
           <div className="mt-8 flex justify-center gap-3">
-            <DarkButton>Xem tất cả bài viết</DarkButton>
-            <GradientButton>Đăng ký nhận tin</GradientButton>
+            <DarkButton href="/blog">Xem tất cả bài viết</DarkButton>
+            <GradientButton href="/blog#newsletter">Đăng ký nhận tin</GradientButton>
           </div>
           <StaggerContainer staggerDelay={0.1} direction="up" className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {BLOG_POSTS.map(([cat, title, desc, image]) => (
@@ -31,10 +32,10 @@ export function BlogSection() {
                 <div className="flex min-h-60 flex-col p-6">
                   <p className="text-lg font-semibold leading-6 text-[#8d1216] transition-colors group-hover:text-[#d9a441]">{title}</p>
                   <p className="mt-2 text-sm leading-6 text-[#7c3f06]/70">{desc}</p>
-                  <a href="#" className="mt-auto flex w-fit items-center gap-2 rounded-full border-2 border-[#d9a441]/30 px-4 py-2 text-xs font-semibold text-[#7c3f06] transition hover:border-[#d9a441] hover:bg-[#d9a441] hover:text-white">
+                  <Link to="/blog" className="mt-auto flex w-fit items-center gap-2 rounded-full border-2 border-[#d9a441]/30 px-4 py-2 text-xs font-semibold text-[#7c3f06] transition hover:border-[#d9a441] hover:bg-[#d9a441] hover:text-white">
                     {cat}
                     <ChevronRight size={14} className="transition-transform group-hover:translate-x-1"/>
-                  </a>
+                  </Link>
                 </div>
               </article>
             ))}

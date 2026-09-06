@@ -96,7 +96,7 @@ export function HeroSection() {
         <ScrollReveal direction="left" delay={0.55} distance={28}>
           <div className="mt-2 sm:mt-3">
             <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-              <DarkButton href="#templates" className="px-4 py-2.5 text-sm">
+              <DarkButton href="#templatesSection" className="px-4 py-2.5 text-sm">
                 Tạo thiệp ngay <ArrowRight size={16} />
               </DarkButton>
               <GradientButton href="#features" className="p-[2px]" innerClassName="px-4 py-2.5">

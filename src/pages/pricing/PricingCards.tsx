@@ -79,11 +79,9 @@ function PlanCard({ plan }: PlanCardProps) {
 
         {/* CTA */}
         <div className="mt-auto">
-          <a href="/register" className="block">
-            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-zen-primary px-4 py-2.5 text-base font-medium text-white transition-all duration-300 hover:scale-[1.02] hover:bg-zen-primary-hover hover:shadow-lg">
-              {plan.ctaLabel}
-              <Sparkles size={16} />
-            </button>
+          <a href="/auth?mode=register" className="flex w-full items-center justify-center gap-2 rounded-xl bg-zen-primary px-4 py-2.5 text-base font-medium text-white transition-all duration-300 hover:scale-[1.02] hover:bg-zen-primary-hover hover:shadow-lg">
+            {plan.ctaLabel}
+            <Sparkles size={16} />
           </a>
         </div>
       </div>

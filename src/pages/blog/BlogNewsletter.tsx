@@ -16,7 +16,7 @@ export function BlogNewsletter() {
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <section id="newsletter" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="overflow-hidden rounded-2xl border border-[#d9a441]/25 bg-gradient-to-r from-[#8d1216] to-[#d9a441] px-6 py-8 sm:px-10 sm:py-10">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
           {/* Text */}
