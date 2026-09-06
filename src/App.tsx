@@ -19,6 +19,7 @@ import Blog from './pages/blog/Blog'
 import Auth from './pages/auth/Auth'
 import PlaceholderPage from './pages/PlaceholderPage'
 import { LegalPage } from './pages/LegalPage'
+import Account from './pages/account/Account'
 
 /**
  * Shared layout — used by most pages so the Header / Footer / global
@@ -105,6 +106,7 @@ function App() {
           <Route path="/forgot-password" element={<PlaceholderPage />} />
           <Route path="/terms" element={<LegalPage kind="terms" />} />
           <Route path="/privacy" element={<LegalPage kind="privacy" />} />
+          <Route path="/account" element={<Account />} />
           {/* Catch-all: send unknown routes to a friendly placeholder */}
           <Route path="*" element={<PlaceholderPage />} />
         </Route>
