@@ -19,6 +19,9 @@ import Blog from './pages/blog/Blog'
 import Auth from './pages/auth/Auth'
 import PlaceholderPage from './pages/PlaceholderPage'
 import { LegalPage } from './pages/LegalPage'
+import Account from './pages/account/Account'
+import OrderPage from './pages/orders/OrderPage'
+import AdminOrders from './pages/admin/AdminOrders'
 
 /**
  * Shared layout — used by most pages so the Header / Footer / global
@@ -105,6 +108,9 @@ function App() {
           <Route path="/forgot-password" element={<PlaceholderPage />} />
           <Route path="/terms" element={<LegalPage kind="terms" />} />
           <Route path="/privacy" element={<LegalPage kind="privacy" />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/order/:templateId" element={<OrderPage />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
           {/* Catch-all: send unknown routes to a friendly placeholder */}
           <Route path="*" element={<PlaceholderPage />} />
         </Route>

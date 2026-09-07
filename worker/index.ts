@@ -1,5 +1,7 @@
 import { Hono } from 'hono'
 import { createAuth } from './modules/auth/auth'
+import { ordersApi } from './modules/orders/orders'
+import { adminOrdersApi } from './modules/admin/orders'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -23,6 +25,9 @@ app.on(['GET', 'POST'], '/api/auth/*', c => {
     )
   }
 })
+
+app.route('/api/v1/orders', ordersApi)
+app.route('/api/v1/admin/orders', adminOrdersApi)
 
 app.get('/api/health', c => {
   return c.json({

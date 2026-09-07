@@ -5,6 +5,7 @@ import { ArrowRight, Menu, UserRound, X } from 'lucide-react'
 import { DarkButton } from '../components/ui/DarkButton'
 import { GradientButton } from '../components/ui/GradientButton'
 import { IMAGES, NAV_LINKS, ROUTE_BY_LABEL } from '../lib/constants'
+import { authClient } from '../lib/auth-client'
 
 /**
  * Header — sticky top nav with scroll-aware morphing shape.
@@ -22,6 +23,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const { data: session } = authClient.useSession()
 
   useEffect(() => {
     const updateScrolled = () => setScrolled(window.scrollY > 24)
@@ -104,7 +106,17 @@ export function Header() {
         </div>
         <div className="flex items-center gap-3">
           <DarkButton className="hidden sm:inline-flex">Tạo thiệp <ArrowRight size={16}/></DarkButton>
-          <GradientButton href="/auth" className="hidden sm:inline-flex"><UserRound size={16}/> Đăng nhập</GradientButton>
+          {session ? (
+            <GradientButton href="/account" className="hidden sm:inline-flex">
+              <UserRound size={16} />
+              Tài khoản
+            </GradientButton>
+          ) : (
+            <GradientButton href="/auth" className="hidden sm:inline-flex">
+              <UserRound size={16} />
+              Đăng nhập
+            </GradientButton>
+          )}
           <button aria-label="Toggle menu" className="grid size-11 place-items-center rounded-full border border-[#d9a441]/30 text-[#8d1216] lg:hidden" onClick={() => setMenu(!menu)}>
             {menu ? <X size={20}/> : <Menu size={20}/>}
           </button>

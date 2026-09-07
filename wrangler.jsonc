@@ -5,8 +5,8 @@
   "compatibility_date": "2026-09-06",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
-    "ENVIRONMENT": "development",
-    "BETTER_AUTH_URL": "http://127.0.0.1:5173"
+    "ENVIRONMENT": "production",
+    "BETTER_AUTH_URL": "https://dearlove.click"
   },
   "secrets": {
     "required": ["BETTER_AUTH_SECRET"]
@@ -26,8 +26,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "dearlove-local",
-      "database_id": "00000000-0000-0000-0000-000000000001",
+      "database_name": "dearlove-production",
+      "database_id": "201d4c80-ce37-47d3-9b72-e4be3c05d068",
       "preview_database_id": "dearlove-local",
       "migrations_dir": "./migrations"
     }
