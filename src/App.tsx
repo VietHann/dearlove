@@ -21,6 +21,8 @@ import PlaceholderPage from './pages/PlaceholderPage'
 import { LegalPage } from './pages/LegalPage'
 import Account from './pages/account/Account'
 import OrderPage from './pages/orders/OrderPage'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrders from './pages/admin/AdminOrders'
 
 /**
@@ -92,6 +94,11 @@ function App() {
         {/* Auth page — full-screen split layout, no Header/Footer */}
         <Route path="/auth" element={<Auth />} />
 
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="orders" element={<AdminOrders />} />
+        </Route>
+
         {/* All other pages share the Layout with Header + Footer */}
         <Route element={<Layout />}>
           <Route
@@ -110,7 +117,6 @@ function App() {
           <Route path="/privacy" element={<LegalPage kind="privacy" />} />
           <Route path="/account" element={<Account />} />
           <Route path="/order/:templateId" element={<OrderPage />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
           {/* Catch-all: send unknown routes to a friendly placeholder */}
           <Route path="*" element={<PlaceholderPage />} />
         </Route>

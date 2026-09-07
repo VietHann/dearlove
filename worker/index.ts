@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { createAuth } from './modules/auth/auth'
 import { ordersApi } from './modules/orders/orders'
 import { adminOrdersApi } from './modules/admin/orders'
+import { adminDashboardApi } from './modules/admin/dashboard'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -28,6 +29,7 @@ app.on(['GET', 'POST'], '/api/auth/*', c => {
 
 app.route('/api/v1/orders', ordersApi)
 app.route('/api/v1/admin/orders', adminOrdersApi)
+app.route('/api/v1/admin/dashboard', adminDashboardApi)
 
 app.get('/api/health', c => {
   return c.json({

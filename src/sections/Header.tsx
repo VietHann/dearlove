@@ -24,6 +24,7 @@ export function Header() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const { data: session } = authClient.useSession()
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === 'admin'
 
   useEffect(() => {
     const updateScrolled = () => setScrolled(window.scrollY > 24)
@@ -107,9 +108,9 @@ export function Header() {
         <div className="flex items-center gap-3">
           <DarkButton className="hidden sm:inline-flex">Tạo thiệp <ArrowRight size={16}/></DarkButton>
           {session ? (
-            <GradientButton href="/account" className="hidden sm:inline-flex">
+            <GradientButton href={isAdmin ? "/admin" : "/account"} className="hidden sm:inline-flex">
               <UserRound size={16} />
-              Tài khoản
+              {isAdmin ? 'Quản trị' : 'Tài khoản'}
             </GradientButton>
           ) : (
             <GradientButton href="/auth" className="hidden sm:inline-flex">
