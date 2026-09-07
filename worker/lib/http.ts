@@ -39,7 +39,7 @@ export function responseError(request: Request, status: number, code: string, me
   })
 }
 
-export function parseJsonObject<T extends Record<string, unknown>>(value: string | null | undefined): T {
+export function parseJsonObject<T = Record<string, unknown>>(value: string | null | undefined): T {
   if (!value) return {} as T
   try {
     const parsed: unknown = JSON.parse(value)
