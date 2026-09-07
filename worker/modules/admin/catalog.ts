@@ -59,7 +59,7 @@ const TEMPLATE_SELECT = `
          t.description, t.access_tier AS accessTier, t.price_label AS priceLabel,
          t.status, t.featured, t.sort_order AS sortOrder,
          (SELECT COUNT(*) FROM template_screenshots ts WHERE ts.template_id = t.id) AS screenshotCount,
-         (SELECT COUNT(*) FROM template_screenshots ts
+         (SELECT COUNT(ma.id) FROM template_screenshots ts
           JOIN media_assets ma ON ma.id = ts.media_asset_id
           WHERE ts.template_id = t.id AND ma.status = 'ready' AND ma.bucket = 'public' AND ma.visibility = 'public') AS readyScreenshotCount,
          t.created_at AS createdAt, t.updated_at AS updatedAt
@@ -288,7 +288,7 @@ adminCatalogApi.post('/templates/:templateId/publish', async c => {
   const templateId = c.req.param('templateId')
   const ready = await c.env.DB.prepare(
     `SELECT t.id, t.category_id AS categoryId, c.status AS categoryStatus,
-            COUNT(ts.id) AS readyScreenshots
+            COUNT(ma.id) AS readyScreenshots
      FROM templates t
      LEFT JOIN template_categories c ON c.id = t.category_id
      LEFT JOIN template_screenshots ts ON ts.template_id = t.id
