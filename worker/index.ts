@@ -4,6 +4,8 @@ import { ordersApi } from './modules/orders/orders'
 import { adminOrdersApi } from './modules/admin/orders'
 import { adminDashboardApi } from './modules/admin/dashboard'
 import { adminMediaApi, publicMediaApi } from './modules/admin/media'
+import { adminCatalogApi } from './modules/admin/catalog'
+import { publicCatalogApi } from './modules/catalog/public'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -33,6 +35,8 @@ app.route('/api/v1/admin/orders', adminOrdersApi)
 app.route('/api/v1/admin/dashboard', adminDashboardApi)
 app.route('/api/v1/admin/media', adminMediaApi)
 app.route('/api/v1/media/public', publicMediaApi)
+app.route('/api/v1/admin/catalog', adminCatalogApi)
+app.route('/api/v1/templates', publicCatalogApi)
 
 app.get('/api/health', c => {
   return c.json({
