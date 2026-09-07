@@ -215,6 +215,17 @@ export const orders = sqliteTable('orders', {
   customerCreated: index('idx_orders_customer_created').on(table.customerId, table.createdAt),
 }))
 
+export const orderRequests = sqliteTable('order_requests', {
+  id: text('id').primaryKey(),
+  idempotencyKey: text('idempotency_key').notNull(),
+  customerId: text('customer_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  orderId: text('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, table => ({
+  customerKeyUnique: uniqueIndex('uq_order_requests_customer_key').on(table.customerId, table.idempotencyKey),
+  created: index('idx_order_requests_created').on(table.createdAt),
+}))
+
 export const orderFormAnswers = sqliteTable('order_form_answers', {
   id: text('id').primaryKey(),
   orderId: text('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
@@ -340,6 +351,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
   orders: many(orders),
+  orderRequests: many(orderRequests),
   notifications: many(notifications),
   auditLogs: many(auditLogs),
 }))
@@ -353,6 +365,7 @@ export const templatesRelations = relations(templates, ({ one, many }) => ({
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   customer: one(users, { fields: [orders.customerId], references: [users.id] }),
   template: one(templates, { fields: [orders.templateId], references: [templates.id] }),
+  requests: many(orderRequests),
   formAnswers: many(orderFormAnswers),
   uploadGroups: many(orderUploadGroups),
   files: many(orderFiles),
@@ -375,6 +388,7 @@ export const schema = {
   templateScreenshots,
   pricingPlans,
   orders,
+  orderRequests,
   orderFormAnswers,
   orderUploadGroups,
   orderFiles,
