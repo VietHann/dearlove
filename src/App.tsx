@@ -25,6 +25,7 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminOrderDetail from './pages/admin/AdminOrderDetail'
+import AdminMedia from './pages/admin/AdminMedia'
 
 /**
  * Shared layout — used by most pages so the Header / Footer / global
@@ -99,6 +100,7 @@ function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="orders/:orderId" element={<AdminOrderDetail />} />
+          <Route path="media" element={<AdminMedia />} />
         </Route>
 
         {/* All other pages share the Layout with Header + Footer */}

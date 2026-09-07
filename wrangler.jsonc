@@ -31,5 +31,15 @@
       "preview_database_id": "dearlove-local",
       "migrations_dir": "./migrations"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PUBLIC_MEDIA",
+      "bucket_name": "dearlove-public-media"
+    },
+    {
+      "binding": "PRIVATE_UPLOADS",
+      "bucket_name": "dearlove-private-uploads"
+    }
   ]
 }

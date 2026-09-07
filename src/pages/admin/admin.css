@@ -436,6 +436,56 @@
   .admin-action-grid { grid-template-columns: 1fr; }
 }
 
+.admin-media-upload-panel { margin-top: 24px; border: 1px solid rgba(141, 18, 22, .1); border-radius: 17px; background: rgba(255, 253, 248, .92); padding: 20px; box-shadow: 0 10px 25px rgba(124, 63, 6, .035); }
+.admin-media-upload-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.admin-media-file-field input { padding: 6px; font-size: .68rem; }
+.admin-upload-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+.admin-selected-file { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; overflow: hidden; color: rgba(73, 46, 30, .7); font-size: .71rem; text-overflow: ellipsis; white-space: nowrap; }
+.admin-progress { height: 6px; overflow: hidden; margin-top: 13px; border-radius: 999px; background: #f1e9db; }
+.admin-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8d1216, #d9a441); transition: width .15s ease; }
+.admin-inline-error { margin: 10px 0 0; color: #a31b2d; font-size: .72rem; }
+.admin-media-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 17px; }
+.admin-media-card { min-width: 0; overflow: hidden; border: 1px solid rgba(141, 18, 22, .1); border-radius: 15px; background: rgba(255, 253, 248, .92); box-shadow: 0 8px 22px rgba(124, 63, 6, .035); }
+.admin-media-preview { position: relative; display: grid; height: 155px; place-items: center; overflow: hidden; background: linear-gradient(135deg, #f7efe1, #fffaf2); }
+.admin-media-preview img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+.admin-media-card:hover .admin-media-preview img { transform: scale(1.025); }
+.admin-media-private { display: grid; place-items: center; gap: 7px; color: rgba(73, 46, 30, .55); font-size: .68rem; }
+.admin-media-status { position: absolute; top: 10px; right: 10px; border-radius: 999px; background: rgba(73, 46, 30, .72); padding: 4px 8px; color: #fff; font-size: .6rem; font-weight: 800; }
+.admin-media-status.is-ready { background: rgba(33, 102, 63, .85); }
+.admin-media-card-body { padding: 13px; }
+.admin-media-card-title strong,
+.admin-media-card-title span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-media-card-title strong { color: #671217; font-size: .74rem; }
+.admin-media-card-title span { margin-top: 4px; color: rgba(73, 46, 30, .53); font-size: .62rem; }
+.admin-media-purpose { display: inline-flex; margin-top: 9px; border-radius: 6px; background: #fdf2e3; padding: 4px 7px; color: #7a4d08; font-size: .6rem; font-weight: 750; }
+.admin-media-card-body .admin-field { margin-top: 13px; }
+.admin-media-card-actions { display: flex; gap: 7px; margin-top: 11px; }
+.admin-media-card-actions .admin-secondary-button,
+.admin-media-card-actions .admin-danger-button { min-height: 34px; flex: 1; padding: 0 7px; font-size: .65rem; }
+.admin-danger-button { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 6px; border: 1px solid #fecaca; border-radius: 9px; background: #fff1f2; color: #a31b2d; cursor: pointer; font-size: .72rem; font-weight: 800; transition: background-color .2s ease, border-color .2s ease; }
+.admin-danger-button:hover { border-color: #fca5a5; background: #ffe4e6; }
+.admin-media-empty { display: grid; min-height: 240px; grid-column: 1 / -1; place-items: center; align-content: center; gap: 7px; border: 1px dashed rgba(141, 18, 22, .18); border-radius: 15px; color: rgba(73, 46, 30, .52); font-size: .74rem; text-align: center; }
+.admin-media-empty svg { color: #d9a441; }
+.admin-media-empty strong { color: #671217; font-family: Georgia, 'Times New Roman', serif; font-size: 1rem; }
+.admin-media-empty span { line-height: 1.5; }
+
+@media (max-width: 1150px) {
+  .admin-media-upload-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-media-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .admin-media-upload-grid,
+  .admin-media-grid { grid-template-columns: 1fr; }
+  .admin-media-upload-panel { padding: 16px; }
+  .admin-media-empty { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-media-preview img,
+  .admin-progress span { transition: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .admin-stat-card,
   .admin-status-row,
