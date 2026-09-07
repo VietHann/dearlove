@@ -12,6 +12,7 @@ import {
   type PaymentStatus,
 } from '../../lib/order-state'
 import { enumValue, requiredString, boundedInteger } from '../../lib/validation'
+import { getMediaResponse, mediaBucket } from '../media/storage'
 
 interface OrderRow {
   id: string
@@ -413,6 +414,19 @@ adminOrdersApi.put('/:orderId/assignment', async c => {
   const result = await c.env.DB.batch([update, close, insert, audit])
   if (Number(result[0]?.meta?.changes || 0) !== 1) return jsonError(c, 409, 'ORDER_CONFLICT', 'Đơn hàng đã được cập nhật. Vui lòng tải lại dữ liệu.')
   return jsonData(c, await loadOrderDetail(c.env.DB, order.id))
+})
+
+adminOrdersApi.get('/:orderId/files/:fileId', async c => {
+  const actor = await requireAdmin(c.req.raw, c.env)
+  if (actor instanceof Response) return actor
+  const file = await c.env.DB.prepare(
+    `SELECT m.bucket, m.object_key AS objectKey, m.status, m.visibility
+     FROM order_files f JOIN media_assets m ON m.id = f.media_asset_id
+     WHERE f.id = ? AND f.order_id = ? LIMIT 1`,
+  ).bind(c.req.param('fileId'), c.req.param('orderId')).first<{ bucket: string; objectKey: string; status: string; visibility: string }>()
+  if (!file || file.status !== 'ready' || file.visibility !== 'private' || file.bucket !== 'private') return jsonError(c, 404, 'FILE_NOT_FOUND', 'Không tìm thấy file.')
+  const response = await getMediaResponse(mediaBucket(c.env, 'private'), file.objectKey, 'private, no-store')
+  return response || jsonError(c, 404, 'FILE_NOT_FOUND', 'Không tìm thấy file.')
 })
 
 adminOrdersApi.post('/:orderId/notes', async c => {
