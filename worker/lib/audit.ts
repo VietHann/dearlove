@@ -43,7 +43,8 @@ export function auditStatement(
   return db.prepare(
     `INSERT INTO audit_logs
        (id, actor_id, action, entity_type, entity_id, metadata_json, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+     SELECT ?, ?, ?, ?, ?, ?, ?, ?
+     WHERE changes() > 0`,
   ).bind(
     crypto.randomUUID(),
     input.actorId,
