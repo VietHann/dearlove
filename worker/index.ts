@@ -10,6 +10,12 @@ import { adminContentApi } from './modules/admin/content'
 import { publicContentApi } from './modules/content/public'
 import { adminPricingApi, publicPricingApi } from './modules/admin/pricing'
 import { adminBlogApi, publicBlogApi } from './modules/admin/blog'
+import { publicContactApi } from './modules/public/contact'
+import { publicNewsletterApi } from './modules/public/newsletter'
+import { adminContactsApi } from './modules/admin/contacts'
+import { adminNewsletterApi } from './modules/admin/newsletter'
+import { adminUsersApi } from './modules/admin/users'
+import { adminAuditApi } from './modules/admin/audit'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -47,6 +53,12 @@ app.route('/api/v1/admin/pricing', adminPricingApi)
 app.route('/api/v1/pricing', publicPricingApi)
 app.route('/api/v1/admin/blog', adminBlogApi)
 app.route('/api/v1/blog', publicBlogApi)
+app.route('/api/v1/contact-submissions', publicContactApi)
+app.route('/api/v1/newsletter-subscriptions', publicNewsletterApi)
+app.route('/api/v1/admin/contacts', adminContactsApi)
+app.route('/api/v1/admin/newsletter', adminNewsletterApi)
+app.route('/api/v1/admin/users', adminUsersApi)
+app.route('/api/v1/admin/audit-log', adminAuditApi)
 
 app.get('/api/health', c => {
   return c.json({

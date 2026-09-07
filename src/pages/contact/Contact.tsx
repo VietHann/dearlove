@@ -3,6 +3,7 @@ import { ContactChannels } from './ContactChannels'
 import { ContactFAQ } from './ContactFAQ'
 import { ContactSupport } from './ContactSupport'
 import { ContactMap } from './ContactMap'
+import ContactForm from './ContactForm'
 
 import './contact.css'
 
@@ -29,6 +30,7 @@ export default function Contact() {
 
         <div className="mx-auto max-w-7xl space-y-4 px-2.5 md:px-4">
           <ContactChannels />
+          <ContactForm />
           <ContactFAQ />
           <ContactSupport />
           <ContactMap />

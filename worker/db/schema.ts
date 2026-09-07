@@ -178,6 +178,17 @@ export const templateScreenshots = sqliteTable('template_screenshots', {
   templateVariant: index('idx_template_screenshots_template_variant').on(table.templateId, table.variant, table.position),
 }))
 
+export const requestDeduplication = sqliteTable('request_deduplication', {
+  id: text('id').primaryKey(),
+  scope: text('scope').notNull(),
+  requestKey: text('request_key').notNull(),
+  responseJson: text('response_json').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, table => ({
+  scopeKeyUnique: uniqueIndex('uq_request_deduplication_scope_key').on(table.scope, table.requestKey),
+  created: index('idx_request_deduplication_created').on(table.createdAt),
+}))
+
 export const blogCategories = sqliteTable('blog_categories', {
   id: text('id').primaryKey(),
   slug: text('slug').notNull(),
@@ -418,6 +429,7 @@ export const schema = {
   pricingPlans,
   blogCategories,
   blogPosts,
+  requestDeduplication,
   orders,
   orderRequests,
   orderFormAnswers,

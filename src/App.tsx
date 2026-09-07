@@ -30,6 +30,10 @@ import AdminCatalog from './pages/admin/AdminCatalog'
 import AdminContent from './pages/admin/AdminContent'
 import AdminPricing from './pages/admin/AdminPricing'
 import AdminBlog from './pages/admin/AdminBlog'
+import AdminContacts from './pages/admin/AdminContacts'
+import AdminNewsletter from './pages/admin/AdminNewsletter'
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminAuditLog from './pages/admin/AdminAuditLog'
 import { PublishedHomeContent } from './pages/content/PublishedContent'
 
 /**
@@ -114,6 +118,10 @@ function App() {
           <Route path="content" element={<AdminContent />} />
           <Route path="pricing" element={<AdminPricing />} />
           <Route path="blog" element={<AdminBlog />} />
+          <Route path="contacts" element={<AdminContacts />} />
+          <Route path="newsletter" element={<AdminNewsletter />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="audit-log" element={<AdminAuditLog />} />
         </Route>
 
         {/* All other pages share the Layout with Header + Footer */}

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FOOTER_SECTIONS, IMAGES } from '../lib/constants'
 import { Send, Facebook, Instagram, Sparkles, Linkedin, Youtube } from 'lucide-react'
@@ -28,6 +29,19 @@ const FOOTER_LINKS: Record<string, Record<string, string>> = {
 
 /** Site footer with newsletter signup, navigation, and social row. */
 export function Footer() {
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [newsletterState, setNewsletterState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const submitNewsletter = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!newsletterEmail.trim()) return
+    setNewsletterState('loading')
+    try {
+      const response = await fetch('/api/v1/newsletter-subscriptions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() }, body: JSON.stringify({ email: newsletterEmail }) })
+      if (!response.ok) throw new Error('newsletter error')
+      setNewsletterState('success')
+    } catch { setNewsletterState('error') }
+  }
+
   return (
     <footer className="bg-[#8d1216] px-5 py-12 text-white sm:px-8 lg:px-12 lg:py-14">
       <div className="mx-auto max-w-[1320px]">
@@ -36,12 +50,12 @@ export function Footer() {
             <Link to="/" className="flex items-center" aria-label="Dearlove - Trang chủ">
               <img src={IMAGES.logo} alt="Dearlove" style={{ height: '88px', width: 'auto' }} className="object-contain" />
             </Link>
-            <h3 className="mt-6 max-w-md text-2xl font-medium leading-tight">Nhận mẫu thiệp mới mỗi tuần.</h3>
-            <form className="mt-5 flex max-w-md rounded-full bg-white p-1.5" onSubmit={event => event.preventDefault()}>
+            <p className="mt-6 max-w-md text-sm text-white/75">{newsletterState === 'success' ? 'Đã đăng ký nhận tin thành công.' : newsletterState === 'error' ? 'Không thể đăng ký lúc này, vui lòng thử lại.' : 'Nhận mẫu thiệp mới mỗi tuần.'}</p>
+            <form className="mt-3 flex max-w-md rounded-full bg-white p-1.5" onSubmit={submitNewsletter} aria-busy={newsletterState === 'loading'}>
               <label className="sr-only" htmlFor="footer-newsletter-email">Email nhận tin</label>
-              <input id="footer-newsletter-email" type="email" className="min-w-0 flex-1 bg-transparent px-4 text-sm text-[#7c3f06] outline-none placeholder:text-[#7c3f06]/40" placeholder="Email của bạn..." />
-              <button type="submit" className="grid size-11 place-items-center rounded-full bg-[#d9a441] text-white transition hover:bg-[#e0a422]" aria-label="Đăng ký nhận tin">
-                <Send size={17} />
+              <input id="footer-newsletter-email" type="email" value={newsletterEmail} onChange={event => setNewsletterEmail(event.target.value)} required className="min-w-0 flex-1 bg-transparent px-4 text-sm text-[#7c3f06] outline-none placeholder:text-[#7c3f06]/40" placeholder="Email của bạn..." />
+              <button type="submit" disabled={newsletterState === 'loading' || newsletterState === 'success'} className="grid size-11 place-items-center rounded-full bg-[#d9a441] text-white transition hover:bg-[#e0a422] disabled:cursor-wait disabled:opacity-60" aria-label="Đăng ký nhận tin">
+                <Send size={17} aria-hidden="true" />
               </button>
             </form>
           </div>
