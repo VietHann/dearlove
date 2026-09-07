@@ -178,6 +178,35 @@ export const templateScreenshots = sqliteTable('template_screenshots', {
   templateVariant: index('idx_template_screenshots_template_variant').on(table.templateId, table.variant, table.position),
 }))
 
+export const blogCategories = sqliteTable('blog_categories', {
+  id: text('id').primaryKey(),
+  slug: text('slug').notNull(),
+  name: text('name').notNull(),
+  ...timestamps,
+}, table => ({
+  slugUnique: uniqueIndex('uq_blog_categories_slug').on(table.slug),
+}))
+
+export const blogPosts = sqliteTable('blog_posts', {
+  id: text('id').primaryKey(),
+  slug: text('slug').notNull(),
+  title: text('title').notNull(),
+  excerpt: text('excerpt'),
+  contentJson: text('content_json').notNull(),
+  categoryId: text('category_id').references(() => blogCategories.id),
+  authorId: text('author_id').notNull().references(() => users.id),
+  coverAssetId: text('cover_asset_id').references(() => mediaAssets.id),
+  status: text('status', { enum: ['draft', 'published', 'archived'] }).notNull().default('draft'),
+  publishedAt: integer('published_at', { mode: 'timestamp_ms' }),
+  seoTitle: text('seo_title'),
+  seoDescription: text('seo_description'),
+  ...timestamps,
+}, table => ({
+  slugUnique: uniqueIndex('uq_blog_posts_slug').on(table.slug),
+  statusPublished: index('idx_blog_posts_status_published').on(table.status, table.publishedAt),
+  categoryStatus: index('idx_blog_posts_category_status').on(table.categoryId, table.status, table.publishedAt),
+}))
+
 export const pricingPlans = sqliteTable('pricing_plans', {
   id: text('id').primaryKey(),
   slug: text('slug').notNull(),
@@ -387,6 +416,8 @@ export const schema = {
   templates,
   templateScreenshots,
   pricingPlans,
+  blogCategories,
+  blogPosts,
   orders,
   orderRequests,
   orderFormAnswers,

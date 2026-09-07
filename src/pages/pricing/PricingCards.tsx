@@ -11,7 +11,7 @@ import { PRICING_PLANS, type PricingPlan } from './pricingData'
  *
  * On mobile (default) the cards stack vertically; on md+ they sit side-by-side.
  */
-export function PricingCards() {
+export function PricingCards({ plans = PRICING_PLANS }: { plans?: PricingPlan[] }) {
   return (
     <section className="m-auto max-w-7xl px-2.5 md:px-4">
       <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">

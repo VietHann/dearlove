@@ -1,0 +1,49 @@
+import { FormEvent, useCallback, useEffect, useState } from 'react'
+import { Archive, BookOpenText, Edit3, Eye, Loader2, Plus, RefreshCw, Save, Send, X } from 'lucide-react'
+import { adminApi, AdminApiError } from '../../lib/admin-api'
+import { formatAdminDate } from './order-utils'
+
+interface BlogCategory { id: string; slug: string; name: string }
+interface BlogPost { id: string; slug: string; title: string; excerpt: string | null; content: string; category: BlogCategory | null; coverUrl: string | null; status: string; publishedAt: number | null; seoTitle: string | null; seoDescription: string | null; updatedAt: number }
+interface BlogResponse { data: { items: BlogPost[] } }
+
+const emptyForm = { slug: '', title: '', excerpt: '', content: '', categoryId: '', coverAssetId: '', status: 'draft', publishedAt: '', seoTitle: '', seoDescription: '' }
+
+export default function AdminBlog() {
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [categories, setCategories] = useState<BlogCategory[]>([])
+  const [form, setForm] = useState(emptyForm)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [status, setStatus] = useState('')
+  const [query, setQuery] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const load = useCallback(async () => {
+    setIsLoading(true); setError('')
+    try {
+      const params = new URLSearchParams(); if (status) params.set('status', status); if (query.trim()) params.set('q', query.trim())
+      const [postResponse, categoryResponse] = await Promise.all([adminApi<BlogResponse>(`/api/v1/admin/blog${params.toString() ? `?${params}` : ''}`), adminApi<{ data: { items: BlogCategory[] } }>('/api/v1/admin/blog/categories')])
+      setPosts(postResponse.data.items); setCategories(categoryResponse.data.items)
+    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Không thể tải blog.') }
+    finally { setIsLoading(false) }
+  }, [query, status])
+  useEffect(() => { void load() }, [load])
+
+  const startEdit = (post?: BlogPost) => {
+    setEditingId(post?.id || null)
+    setForm(post ? { slug: post.slug, title: post.title, excerpt: post.excerpt || '', content: post.content, categoryId: post.category?.id || '', coverAssetId: '', status: post.status, publishedAt: post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 16) : '', seoTitle: post.seoTitle || '', seoDescription: post.seoDescription || '' } : emptyForm)
+  }
+  const update = (key: keyof typeof form, value: string) => setForm(current => ({ ...current, [key]: value }))
+  const save = async (event: FormEvent) => {
+    event.preventDefault(); setIsSaving(true); setError('')
+    const body = JSON.stringify({ ...form, excerpt: form.excerpt || null, categoryId: form.categoryId || null, coverAssetId: form.coverAssetId || null, publishedAt: form.publishedAt || null, seoTitle: form.seoTitle || null, seoDescription: form.seoDescription || null })
+    try { if (editingId) await adminApi(`/api/v1/admin/blog/${editingId}`, { method: 'PATCH', body }); else await adminApi('/api/v1/admin/blog', { method: 'POST', body }); setEditingId(null); setForm(emptyForm); await load() }
+    catch (cause) { setError(cause instanceof AdminApiError ? cause.message : cause instanceof Error ? cause.message : 'Không thể lưu bài viết.') }
+    finally { setIsSaving(false) }
+  }
+  const setPostStatus = async (post: BlogPost, action: 'publish' | 'archive') => { try { await adminApi(`/api/v1/admin/blog/${post.id}/${action}`, { method: 'POST' }); await load() } catch (cause) { setError(cause instanceof Error ? cause.message : 'Không thể cập nhật bài viết.') } }
+
+  return <div className="admin-page"><div className="admin-page-heading"><div><p className="admin-eyebrow">Content / Blog</p><h1 className="admin-page-title">Blog</h1><p className="admin-page-description">Viết và publish nội dung an toàn; Markdown được lọc ở Worker trước khi lưu.</p></div><button type="button" className="admin-secondary-button" onClick={() => void load()} disabled={isLoading}><RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} aria-hidden="true" /> Làm mới</button></div><div className="admin-toolbar"><label className="admin-search-field"><span className="sr-only">Tìm bài viết</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Tìm tiêu đề hoặc slug..." /></label><label className="admin-field admin-toolbar-field"><span className="sr-only">Trạng thái</span><select value={status} onChange={event => setStatus(event.target.value)}><option value="">Tất cả trạng thái</option><option value="draft">Nháp</option><option value="published">Đã publish</option><option value="archived">Đã archive</option></select></label><button type="button" className="admin-primary-button" onClick={() => startEdit()}><Plus size={15} aria-hidden="true" /> Viết bài mới</button></div>{error && <div className="admin-alert admin-alert-error" role="alert"><span>{error}</span><button type="button" onClick={() => void load()}>Thử lại</button></div>}{editingId !== null || form !== emptyForm ? <form className="admin-editor-panel" onSubmit={save}><div className="admin-editor-heading"><div><p className="admin-panel-kicker">{editingId ? 'Chỉnh sửa bài viết' : 'Bài viết mới'}</p><h2>{editingId ? form.title : 'Tạo bài viết'}</h2></div><button type="button" className="admin-icon-button" aria-label="Đóng form blog" onClick={() => { setEditingId(null); setForm(emptyForm) }}><X size={17} aria-hidden="true" /></button></div><div className="admin-editor-grid"><label className="admin-field"><span>Tiêu đề</span><input value={form.title} onChange={event => update('title', event.target.value)} required maxLength={220} /></label><label className="admin-field"><span>Slug</span><input value={form.slug} onChange={event => update('slug', event.target.value)} required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" /></label><label className="admin-field"><span>Chuyên mục</span><select value={form.categoryId} onChange={event => update('categoryId', event.target.value)}><option value="">Chưa phân loại</option>{categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label><label className="admin-field"><span>Trạng thái</span><select value={form.status} onChange={event => update('status', event.target.value)}><option value="draft">Nháp</option><option value="published">Đã publish</option><option value="archived">Đã archive</option></select></label><label className="admin-field admin-field-full"><span>Tóm tắt</span><textarea rows={3} value={form.excerpt} onChange={event => update('excerpt', event.target.value)} maxLength={800} /></label><label className="admin-field admin-field-full"><span>Nội dung Markdown</span><textarea rows={14} value={form.content} onChange={event => update('content', event.target.value)} required maxLength={30000} spellCheck /></label><label className="admin-field"><span>Cover asset ID (public ready)</span><input value={form.coverAssetId} onChange={event => update('coverAssetId', event.target.value)} placeholder="UUID media" /></label><label className="admin-field"><span>Publish lúc</span><input type="datetime-local" value={form.publishedAt} onChange={event => update('publishedAt', event.target.value)} /></label><label className="admin-field"><span>SEO title</span><input value={form.seoTitle} onChange={event => update('seoTitle', event.target.value)} maxLength={160} /></label><label className="admin-field"><span>SEO description</span><input value={form.seoDescription} onChange={event => update('seoDescription', event.target.value)} maxLength={320} /></label></div><div className="admin-editor-actions"><button type="button" className="admin-secondary-button" onClick={() => { setEditingId(null); setForm(emptyForm) }}>Hủy</button><button type="submit" className="admin-primary-button" disabled={isSaving}>{isSaving ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : <Save size={15} aria-hidden="true" />} Lưu bài viết</button></div></form> : null}<section className="admin-list-panel"><div className="admin-list-header"><div className="admin-list-title"><BookOpenText size={18} aria-hidden="true" /><h2>{isLoading ? 'Đang tải...' : `${posts.length} bài viết`}</h2></div></div><div className="admin-catalog-list">{posts.map(post => <div className="admin-catalog-row" key={post.id}><div className="admin-catalog-row-main"><strong>{post.title}</strong><span>/{post.slug} · {post.category?.name || 'Chưa phân loại'} · cập nhật {formatAdminDate(post.updatedAt, true)}</span></div><span className={`admin-status-badge ${post.status === 'published' ? 'admin-tone-success' : post.status === 'archived' ? 'admin-tone-danger' : 'admin-tone-neutral'}`}>{post.status}</span><button type="button" className="admin-row-edit" onClick={() => startEdit(post)} aria-label={`Sửa ${post.title}`}><Edit3 size={16} aria-hidden="true" /></button>{post.status !== 'published' && <button type="button" className="admin-row-action" onClick={() => void setPostStatus(post, 'publish')} aria-label={`Publish ${post.title}`}><Send size={16} aria-hidden="true" /></button>}{post.status !== 'archived' && <button type="button" className="admin-row-action is-danger" onClick={() => void setPostStatus(post, 'archive')} aria-label={`Archive ${post.title}`}><Archive size={16} aria-hidden="true" /></button>}{post.status === 'published' && <a className="admin-row-action" href={`/blog/${post.slug}`} target="_blank" rel="noreferrer" aria-label={`Xem ${post.title}`}><Eye size={16} aria-hidden="true" /></a>}</div>)}{!isLoading && posts.length === 0 && <div className="admin-empty-state"><BookOpenText size={24} aria-hidden="true" /><strong>Chưa có bài viết</strong><p>Tạo bài viết đầu tiên từ editor.</p></div>}</div></section></div>
+}

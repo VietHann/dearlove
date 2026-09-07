@@ -8,6 +8,8 @@ import { adminCatalogApi } from './modules/admin/catalog'
 import { publicCatalogApi } from './modules/catalog/public'
 import { adminContentApi } from './modules/admin/content'
 import { publicContentApi } from './modules/content/public'
+import { adminPricingApi, publicPricingApi } from './modules/admin/pricing'
+import { adminBlogApi, publicBlogApi } from './modules/admin/blog'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -41,6 +43,10 @@ app.route('/api/v1/admin/catalog', adminCatalogApi)
 app.route('/api/v1/templates', publicCatalogApi)
 app.route('/api/v1/admin/content', adminContentApi)
 app.route('/api/v1/site/bootstrap', publicContentApi)
+app.route('/api/v1/admin/pricing', adminPricingApi)
+app.route('/api/v1/pricing', publicPricingApi)
+app.route('/api/v1/admin/blog', adminBlogApi)
+app.route('/api/v1/blog', publicBlogApi)
 
 app.get('/api/health', c => {
   return c.json({
