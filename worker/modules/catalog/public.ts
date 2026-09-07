@@ -49,7 +49,7 @@ publicCatalogApi.get('/', async c => {
   const cursorValue = c.req.query('cursor')
   const cursor = parseCursor(cursorValue)
   const limit = Math.min(parseLimit(c.req.query('limit')), PUBLIC_LIMIT)
-  const where = ["t.status = 'published'"]
+  const where = ["t.status = 'published'", "EXISTS (SELECT 1 FROM template_screenshots ready_ts JOIN media_assets ready_ma ON ready_ma.id = ready_ts.media_asset_id WHERE ready_ts.template_id = t.id AND ready_ma.bucket = 'public' AND ready_ma.visibility = 'public' AND ready_ma.status = 'ready')"]
   const binds: Array<string | number> = []
   if (category) { where.push('c.slug = ?'); binds.push(category) }
   if (tier === 'free' || tier === 'premium') { where.push('t.access_tier = ?'); binds.push(tier) }
@@ -65,7 +65,7 @@ publicCatalogApi.get('/', async c => {
 })
 
 publicCatalogApi.get('/:slug', async c => {
-  const row = await c.env.DB.prepare(`${PUBLIC_TEMPLATE_SELECT} WHERE t.slug = ? AND t.status = 'published' LIMIT 1`).bind(c.req.param('slug')).first<Record<string, unknown>>()
+  const row = await c.env.DB.prepare(`${PUBLIC_TEMPLATE_SELECT} WHERE t.slug = ? AND t.status = 'published' AND EXISTS (SELECT 1 FROM template_screenshots ready_ts JOIN media_assets ready_ma ON ready_ma.id = ready_ts.media_asset_id WHERE ready_ts.template_id = t.id AND ready_ma.bucket = 'public' AND ready_ma.visibility = 'public' AND ready_ma.status = 'ready') LIMIT 1`).bind(c.req.param('slug')).first<Record<string, unknown>>()
   if (!row) return c.json({ error: { code: 'TEMPLATE_NOT_FOUND', message: 'Không tìm thấy mẫu thiệp.' } }, 404)
   return jsonData(c, mapPublicTemplate(row), 200, 'public, max-age=60, s-maxage=300')
 })
