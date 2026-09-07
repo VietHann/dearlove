@@ -34,6 +34,7 @@ import AdminContacts from './pages/admin/AdminContacts'
 import AdminNewsletter from './pages/admin/AdminNewsletter'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminAuditLog from './pages/admin/AdminAuditLog'
+import CustomerOrderDetail from './pages/account/OrderDetail'
 import { PublishedHomeContent } from './pages/content/PublishedContent'
 
 /**
@@ -141,6 +142,7 @@ function App() {
           <Route path="/terms" element={<LegalPage kind="terms" />} />
           <Route path="/privacy" element={<LegalPage kind="privacy" />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/account/orders/:orderId" element={<CustomerOrderDetail />} />
           <Route path="/order/:templateId" element={<OrderPage />} />
           {/* Catch-all: send unknown routes to a friendly placeholder */}
           <Route path="*" element={<PlaceholderPage />} />

@@ -18,6 +18,7 @@ export default function OrderPage() {
   })
   const [status, setStatus] = useState<'idle' | 'submitting' | 'error'>('idle')
   const [error, setError] = useState('')
+  const [orderId, setOrderId] = useState('')
   const [orderCode, setOrderCode] = useState('')
 
   useEffect(() => {
@@ -58,12 +59,13 @@ export default function OrderPage() {
         credentials: 'include',
         body: JSON.stringify({ ...form, templateId, templateName }),
       })
-      const body = await response.json() as { data?: { orderCode: string }; error?: { message?: string } }
+      const body = await response.json() as { data?: { id: string; orderCode: string }; error?: { message?: string } }
       if (!response.ok || !body.data) {
         setStatus('error')
         setError(body.error?.message || 'Không thể tạo đơn. Vui lòng thử lại.')
         return
       }
+      setOrderId(body.data.id)
       setOrderCode(body.data.orderCode)
       setStatus('idle')
     } catch {
@@ -80,7 +82,7 @@ export default function OrderPage() {
           <p className="eyebrow mt-6">Đã nhận yêu cầu</p>
           <h1 className="mt-3 font-display text-4xl font-bold text-[#8d1216]">Mã đơn {orderCode}</h1>
           <p className="mt-4 text-sm leading-6 text-[#7c3f06]/70">Đội ngũ Dearlove sẽ kiểm tra thông tin và liên hệ lại với bạn. Bước tải ảnh sẽ được mở trong màn theo dõi đơn.</p>
-          <Link to="/account" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#8d1216] px-5 py-3 text-sm font-semibold text-white hover:bg-[#7c3f06]">Về tài khoản <ArrowRight size={16} /></Link>
+          <Link to={`/account/orders/${orderId}`} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#8d1216] px-5 py-3 text-sm font-semibold text-white hover:bg-[#7c3f06]">Theo dõi đơn <ArrowRight size={16} /></Link>
         </section>
       </main>
     )

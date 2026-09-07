@@ -6,7 +6,7 @@ import { authClient } from '../../lib/auth-client'
 export default function Account() {
   const navigate = useNavigate()
   const { data: session, isPending } = authClient.useSession()
-  const [orders, setOrders] = useState<Array<{ order_code: string; template_id: string; status: string; payment_status: string; created_at: number }>>([])
+  const [orders, setOrders] = useState<Array<{ id: string; orderCode: string; templateId: string; templateName: string | null; status: string; paymentStatus: string; createdAt: number }>>([])
 
   useEffect(() => {
     if (!isPending && !session) {
@@ -18,7 +18,7 @@ export default function Account() {
     if (!session) return
     fetch('/api/v1/orders', { credentials: 'include' })
       .then(response => response.ok ? response.json() : Promise.reject(new Error('orders unavailable')))
-      .then(body => setOrders(body.data ?? []))
+      .then(body => setOrders(body.data?.items ?? []))
       .catch(() => setOrders([]))
   }, [session])
 
@@ -72,16 +72,16 @@ export default function Account() {
             ) : (
               <div className="mt-4 grid gap-3">
                 {orders.map(order => (
-                  <div key={order.order_code} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[#fdf2e3]/60 px-4 py-3 text-sm">
+                  <Link to={`/account/orders/${order.id}`} key={order.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[#fdf2e3]/60 px-4 py-3 text-sm transition hover:bg-[#fdf2e3]">
                     <div>
-                      <p className="font-semibold text-[#8d1216]">{order.order_code}</p>
-                      <p className="mt-1 text-xs text-[#7c3f06]/65">Mẫu: {order.template_id}</p>
+                      <p className="font-semibold text-[#8d1216]">{order.orderCode}</p>
+                      <p className="mt-1 text-xs text-[#7c3f06]/65">Mẫu: {order.templateName || order.templateId}</p>
                     </div>
                     <div className="text-right text-xs text-[#7c3f06]/70">
                       <p>{order.status}</p>
-                      <p className="mt-1">Thanh toán: {order.payment_status}</p>
+                      <p className="mt-1">Thanh toán: {order.paymentStatus}</p>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
