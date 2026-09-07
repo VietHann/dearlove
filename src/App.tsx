@@ -27,6 +27,8 @@ import AdminOrders from './pages/admin/AdminOrders'
 import AdminOrderDetail from './pages/admin/AdminOrderDetail'
 import AdminMedia from './pages/admin/AdminMedia'
 import AdminCatalog from './pages/admin/AdminCatalog'
+import AdminContent from './pages/admin/AdminContent'
+import { PublishedHomeContent } from './pages/content/PublishedContent'
 
 /**
  * Shared layout — used by most pages so the Header / Footer / global
@@ -59,7 +61,7 @@ function Layout() {
 }
 
 function HomePage() {
-  return (
+  const fallback = (
     <>
       <main className="relative">
         <ParallaxPetals />
@@ -76,6 +78,8 @@ function HomePage() {
       </main>
     </>
   )
+
+  return <PublishedHomeContent fallback={fallback} />
 }
 
 /**
@@ -105,6 +109,7 @@ function App() {
           <Route path="catalog" element={<AdminCatalog />} />
           <Route path="catalog/templates" element={<AdminCatalog />} />
           <Route path="catalog/categories" element={<AdminCatalog />} />
+          <Route path="content" element={<AdminContent />} />
         </Route>
 
         {/* All other pages share the Layout with Header + Footer */}

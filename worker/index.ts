@@ -6,6 +6,8 @@ import { adminDashboardApi } from './modules/admin/dashboard'
 import { adminMediaApi, publicMediaApi } from './modules/admin/media'
 import { adminCatalogApi } from './modules/admin/catalog'
 import { publicCatalogApi } from './modules/catalog/public'
+import { adminContentApi } from './modules/admin/content'
+import { publicContentApi } from './modules/content/public'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -37,6 +39,8 @@ app.route('/api/v1/admin/media', adminMediaApi)
 app.route('/api/v1/media/public', publicMediaApi)
 app.route('/api/v1/admin/catalog', adminCatalogApi)
 app.route('/api/v1/templates', publicCatalogApi)
+app.route('/api/v1/admin/content', adminContentApi)
+app.route('/api/v1/site/bootstrap', publicContentApi)
 
 app.get('/api/health', c => {
   return c.json({
