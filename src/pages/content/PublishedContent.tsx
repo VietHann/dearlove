@@ -54,5 +54,5 @@ export function PublishedHomeContent({ fallback }: { fallback: ReactNode }) {
   const [sections, setSections] = useState<ContentSection[] | null>(null)
   useEffect(() => { const controller = new AbortController(); getPublicBootstrap(controller.signal).then(response => setSections(response.data.pages.home?.sections || null)).catch(() => setSections(null)); return () => controller.abort() }, [])
   if (!sections || sections.length === 0) return <>{fallback}</>
-  return <main className="relative"><div className="mx-auto max-w-6xl px-5 pt-10"><p className="eyebrow">Dearlove studio</p></div>{sections.map(section => <PublishedBlock key={section.stableKey} section={section} />)}</main>
+  return <main className="relative landing-home"><div className="mx-auto max-w-6xl px-5 pt-10"><p className="eyebrow">Dearlove studio</p></div>{sections.map(section => <PublishedBlock key={section.stableKey} section={section} />)}</main>
 }

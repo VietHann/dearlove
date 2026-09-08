@@ -70,7 +70,7 @@ function Layout() {
 function HomePage() {
   const fallback = (
     <>
-      <main className="relative">
+      <main className="relative landing-home">
         <ParallaxPetals />
 
         <HeroSection />

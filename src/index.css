@@ -119,6 +119,26 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .petal-section--delayed { animation: none; }
 }
 
+/* Landing rhythm: more breathing room on small screens without changing content. */
+.landing-home > section + section { border-top: 1px solid rgba(217, 164, 65, .10); }
+.landing-home #why-choose > .max-w-6xl { padding-block: clamp(3.5rem, 7vw, 5rem); }
+.landing-home #why-choose .mt-7 { margin-top: 2.5rem; }
+.landing-home #why-choose .space-y-7 { row-gap: 3rem; }
+
+@media (max-width: 767px) {
+  .landing-home > #problems { padding-block: 4.5rem; }
+  .landing-home > section:not(:first-child) { scroll-margin-top: 72px; }
+  .landing-home > section:nth-of-type(3) { padding-block: 4.75rem; }
+  .landing-home > #feedback { padding-block: 4.75rem; }
+  .landing-home > #features { padding-block: 5.5rem; }
+  .landing-home > .templates-section { padding-block: 5.5rem; }
+  .landing-home > section:nth-last-of-type(2),
+  .landing-home > #faq { padding-block: 5.5rem; }
+  .landing-home #why-choose > .max-w-6xl { padding-block: 4.75rem; }
+  .landing-home #why-choose .space-y-7 { row-gap: 3.5rem; }
+}
+
+
 /* Smooth shadow utilities */
 .shadow-soft { box-shadow: 0 8px 30px rgba(124, 63, 6, .08); }
 
