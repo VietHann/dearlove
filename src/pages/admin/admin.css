@@ -663,3 +663,122 @@
   .admin-signout,
   .admin-skip-link { transition: none; }
 }
+
+/* White admin workspace: Vietnamese-first typography and restrained surfaces. */
+.admin-app,
+.admin-app * { font-family: 'Be Vietnam Pro', 'Noto Sans', sans-serif; }
+.admin-app {
+  min-height: 100vh;
+  background: #fff;
+  color: #1f2937;
+}
+.admin-app .admin-sidebar,
+.admin-app .admin-content-shell,
+.admin-app .admin-mobile-header,
+.admin-app .admin-main,
+.admin-app .admin-panel,
+.admin-app .admin-stat-card,
+.admin-app .admin-list-panel,
+.admin-app .admin-detail-panel,
+.admin-app .admin-media-upload-panel,
+.admin-app .admin-media-card,
+.admin-app .admin-content-pages,
+.admin-app .admin-content-editor,
+.admin-app .admin-operation-card,
+.admin-app .admin-editor-panel,
+.admin-app .admin-block-editor {
+  background: #fff;
+}
+.admin-app .admin-sidebar {
+  border-right-color: #e5e7eb;
+  box-shadow: 8px 0 24px rgba(15, 23, 42, .04);
+  backdrop-filter: none;
+}
+.admin-app .admin-mobile-header { border-bottom-color: #e5e7eb; backdrop-filter: none; }
+.admin-app .admin-main { color: #1f2937; }
+.admin-app .admin-brand strong,
+.admin-app .admin-mobile-brand,
+.admin-app .admin-page-title,
+.admin-app .admin-panel-heading h2,
+.admin-app .admin-detail-section-heading h2,
+.admin-app .admin-editor-heading h2,
+.admin-app .admin-empty-state strong,
+.admin-app .admin-stat-value,
+.admin-app .admin-catalog-row-main strong,
+.admin-app .admin-block-title strong,
+.admin-app .admin-operation-header h2 { font-family: 'Be Vietnam Pro', 'Noto Sans', sans-serif; }
+.admin-app .admin-page-title { letter-spacing: -.035em; font-weight: 800; }
+.admin-app .admin-page-description,
+.admin-app .admin-muted-copy,
+.admin-app .admin-list-meta,
+.admin-app .admin-table-secondary,
+.admin-app .admin-detail-muted,
+.admin-app .admin-operation-footer,
+.admin-app .admin-subscriber-meta,
+.admin-app .admin-audit-actor time { color: #64748b; }
+.admin-app .admin-nav-link { color: #475569; }
+.admin-app .admin-nav-link:hover { border-color: #e5e7eb; background: #fffaf0; color: #8d1216; }
+.admin-app .admin-nav-link.is-active { border-color: #eadfca; background: #fffaf0; color: #8d1216; box-shadow: inset 3px 0 #d9a441; }
+.admin-app .admin-nav-label,
+.admin-app .admin-eyebrow,
+.admin-app .admin-panel-kicker { color: #8a6a37; }
+.admin-app .admin-user-copy span,
+.admin-app .admin-breadcrumb,
+.admin-app .admin-breadcrumb span { color: #64748b; }
+.admin-app .admin-panel,
+.admin-app .admin-stat-card,
+.admin-app .admin-list-panel,
+.admin-app .admin-detail-panel,
+.admin-app .admin-media-upload-panel,
+.admin-app .admin-media-card,
+.admin-app .admin-content-pages,
+.admin-app .admin-content-editor,
+.admin-app .admin-operation-card,
+.admin-app .admin-editor-panel,
+.admin-app .admin-block-editor { border-color: #e5e7eb; box-shadow: 0 6px 18px rgba(15, 23, 42, .035); }
+.admin-app .admin-stat-card::after { background: rgba(217, 164, 65, .09); }
+.admin-app .admin-stat-card-accent { background: #fff; }
+.admin-app .admin-secondary-button,
+.admin-app .admin-text-link,
+.admin-app .admin-icon-button { border-color: #d1d5db; background: #fff; }
+.admin-app .admin-secondary-button:hover,
+.admin-app .admin-text-link:hover,
+.admin-app .admin-icon-button:hover { border-color: #d9a441; background: #fffaf0; }
+.admin-app .admin-search-field,
+.admin-app .admin-filter-button,
+.admin-app .admin-clear-button { border-color: #d1d5db; background: #fff; }
+.admin-app .admin-search-field:focus-within,
+.admin-app .admin-field input:focus,
+.admin-app .admin-field select:focus,
+.admin-app .admin-field textarea:focus { border-color: #a16207; box-shadow: 0 0 0 3px rgba(161, 98, 7, .14); }
+.admin-app .admin-field input,
+.admin-app .admin-field select,
+.admin-app .admin-field textarea { border-color: #d1d5db; background: #fff; color: #1f2937; }
+.admin-app .admin-filter-panel,
+.admin-app .admin-snapshot-card,
+.admin-app .admin-customer-note,
+.admin-app .admin-note-card,
+.admin-app .admin-upload-group,
+.admin-app .admin-action-form,
+.admin-app .admin-settings-box,
+.admin-app .admin-revision-panel { border-color: #e5e7eb; background: #fff; }
+.admin-app .admin-table-primary,
+.admin-app .admin-answer-row > span:last-child,
+.admin-app .admin-detail-field-grid strong { color: #1f2937; }
+.admin-app .admin-data-table th { color: #475569; border-bottom-color: #e5e7eb; }
+.admin-app .admin-data-table td,
+.admin-app .admin-dashboard-order-row,
+.admin-app .admin-compact-item,
+.admin-app .admin-catalog-row,
+.admin-app .admin-audit-row { border-bottom-color: #eef0f3; }
+.admin-app .admin-data-table tbody tr:hover,
+.admin-app .admin-content-page-item:hover,
+.admin-app .admin-status-row:hover { background: #fffaf0; }
+.admin-app .admin-backdrop { background: rgba(15, 23, 42, .32); }
+.admin-app .admin-loading { background: #fff; color: #475569; }
+.admin-app .admin-media-preview { background: #f8fafc; }
+.admin-app .admin-media-empty { border-color: #d1d5db; }
+.admin-app .admin-operation-message { background: #f8fafc; color: #334155; }
+.admin-app .admin-skip-link { font-family: 'Be Vietnam Pro', 'Noto Sans', sans-serif; }
+.admin-app pre,
+.admin-app code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
