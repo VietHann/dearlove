@@ -655,6 +655,37 @@
   .admin-operation-card { transition: none; }
 }
 
+.admin-preview-overlay { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; background: rgba(15, 23, 42, .48); padding: 20px; }
+.admin-preview-dialog { display: flex; width: min(1180px, 100%); height: min(92vh, 900px); flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb; border-radius: 18px; background: #fff; box-shadow: 0 24px 80px rgba(15, 23, 42, .24); }
+.admin-preview-toolbar { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 16px; border-bottom: 1px solid #e5e7eb; background: #fff; padding: 16px 18px; }
+.admin-preview-toolbar h2 { margin: 4px 0 0; color: #111827; font-size: 1.05rem; font-weight: 750; }
+.admin-preview-toolbar p { margin: 4px 0 0; color: #64748b; font-size: .7rem; }
+.admin-preview-site { min-height: 0; flex: 1; overflow: auto; background: #fff; }
+.admin-preview-site-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 12px 20px; color: #64748b; font-size: .68rem; }
+.admin-preview-logo { color: #8d1216; font-size: .9rem; font-weight: 800; }
+.admin-preview-site-body { min-height: 100%; background: #fff; }
+.admin-preview-empty { display: grid; min-height: 280px; place-items: center; color: #64748b; font-size: .82rem; }
+
+@media (max-width: 640px) {
+  .admin-preview-overlay { padding: 0; }
+  .admin-preview-dialog { height: 100vh; border-radius: 0; }
+  .admin-preview-toolbar { padding: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-preview-overlay,
+  .admin-preview-dialog { transition: none; }
+}
+
+.admin-content-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; color: #64748b; font-size: .7rem; }
+.admin-content-shortcuts span { font-weight: 700; }
+.admin-content-shortcuts a { border: 1px solid #e5e7eb; border-radius: 999px; background: #fff; padding: 7px 11px; color: #8d1216; font-weight: 700; text-decoration: none; }
+.admin-content-shortcuts a:hover { border-color: #d9a441; background: #fffaf0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-content-shortcuts a { transition: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .admin-sidebar,
   .admin-backdrop,

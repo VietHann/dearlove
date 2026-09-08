@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  BarChart3,
-  BookOpenText,
   Boxes,
   ChevronRight,
   ClipboardList,
   FileText,
-  Images,
   LayoutDashboard,
   Mail,
   Menu,
@@ -34,17 +31,20 @@ const NAV_GROUPS = [
   {
     label: 'Nội dung',
     items: [
+      { to: '/admin/content', label: 'Content Hub', icon: FileText },
       { to: '/admin/catalog', label: 'Catalog', icon: Boxes },
-      { to: '/admin/media', label: 'Thư viện ảnh', icon: Images },
-      { to: '/admin/content', label: 'Trang & section', icon: FileText },
-      { to: '/admin/pricing', label: 'Bảng giá', icon: BarChart3 },
-      { to: '/admin/blog', label: 'Blog', icon: BookOpenText },
+    ],
+  },
+  {
+    label: 'Vận hành',
+    items: [
+      { to: '/admin/contacts', label: 'Liên hệ', icon: Mail },
+      { to: '/admin/newsletter', label: 'Newsletter', icon: Mail },
     ],
   },
   {
     label: 'Hệ thống',
     items: [
-      { to: '/admin/newsletter', label: 'Newsletter', icon: Mail },
       { to: '/admin/users', label: 'Người dùng', icon: Users },
       { to: '/admin/audit-log', label: 'Audit log', icon: ShieldCheck },
     ],

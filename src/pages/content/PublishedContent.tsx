@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Heart, MapPin, Phone, Quote } from 'lucide-react'
+import { ArrowRight, Building2, Check, Facebook, Heart, HelpCircle, Mail, MapPin, MessageCircle, Phone, Quote, ShieldCheck, Briefcase, Megaphone } from 'lucide-react'
 import { getPublicBootstrap, type ContentSection } from '../../lib/content-api'
 
 function safeHref(value: unknown): string | null {
   if (typeof value !== 'string' || value.length > 500) return null
   if (value.startsWith('/') && !value.startsWith('//')) return value
-  return /^https:\/\//i.test(value) ? value : null
+  return /^(?:https:\/\/|mailto:|tel:)/i.test(value) ? value : null
 }
 
-function PublishedBlock({ section }: { section: ContentSection }) {
+function contactIcon(key: unknown) {
+  const icons = { facebook: Facebook, message: MessageCircle, mail: Mail, phone: Phone, help: HelpCircle, briefcase: Briefcase, megaphone: Megaphone, shield: ShieldCheck, building: Building2 }
+  return icons[typeof key === 'string' ? key as keyof typeof icons : 'message'] || MessageCircle
+}
+
+export function PublishedBlock({ section }: { section: ContentSection }) {
   if (!section.visible) return null
   const payload = section.payload
   if (section.blockType === 'banner') return <div className="mx-auto my-8 flex max-w-5xl items-center justify-between gap-4 rounded-2xl border border-[#d9a441]/25 bg-[#fff8ed] px-5 py-4 text-sm text-[#7c3f06] shadow-sm"><span>{String(payload.text || payload.title || '')}</span>{safeHref(payload.href) && <Link to={safeHref(payload.href) as string} className="inline-flex shrink-0 items-center gap-2 font-semibold text-[#8d1216]">Xem thêm <ArrowRight size={15} aria-hidden="true" /></Link>}</div>
@@ -20,8 +25,29 @@ function PublishedBlock({ section }: { section: ContentSection }) {
   if (section.blockType === 'stats') return <section className="mx-auto grid max-w-5xl grid-cols-2 gap-3 px-5 py-10 sm:grid-cols-4">{(Array.isArray(payload.items) ? payload.items : []).map((item, index) => { const value = item as Record<string, unknown>; return <div className="rounded-2xl border border-[#d9a441]/20 bg-white p-5 text-center" key={index}><strong className="font-display text-3xl text-[#8d1216]">{String(value.value || '')}</strong><span className="mt-2 block text-xs text-[#7c3f06]/65">{String(value.label || '')}</span></div> })}</section>
   if (section.blockType === 'testimonials') return <section className="mx-auto grid max-w-5xl gap-4 px-5 py-12 sm:grid-cols-2">{(Array.isArray(payload.items) ? payload.items : []).map((item, index) => { const value = item as Record<string, unknown>; return <blockquote className="rounded-2xl border border-[#d9a441]/20 bg-white p-6 shadow-soft" key={index}><Quote size={22} className="text-[#d9a441]" aria-hidden="true" /><p className="mt-4 text-sm leading-7 text-[#7c3f06]/75">{String(value.quote || '')}</p><cite className="mt-4 block not-italic font-semibold text-[#8d1216]">{String(value.author || '')}</cite></blockquote> })}</section>
   if (section.blockType === 'feature_grid') return <section className="mx-auto grid max-w-5xl gap-4 px-5 py-12 sm:grid-cols-2 lg:grid-cols-3">{(Array.isArray(payload.items) ? payload.items : []).map((item, index) => { const value = item as Record<string, unknown>; return <article className="rounded-2xl border border-[#d9a441]/20 bg-white p-6" key={index}><Check size={20} className="text-[#d9a441]" aria-hidden="true" /><h2 className="mt-4 font-heading text-lg font-semibold text-[#8d1216]">{String(value.title || '')}</h2><p className="mt-2 text-sm leading-6 text-[#7c3f06]/70">{String(value.description || '')}</p></article> })}</section>
+  if (section.blockType === 'contact_channels') return <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 py-12 md:grid-cols-2 lg:grid-cols-4">{(Array.isArray(payload.items) ? payload.items : []).map((item, index) => { const value = item as Record<string, unknown>; const Icon = contactIcon(value.iconKey); return <article className="flex flex-col rounded-2xl border border-[#d9a441]/20 bg-white p-6 shadow-soft" key={index}><div className="mb-5 grid size-12 place-items-center rounded-2xl bg-[#fdf2e3] text-[#8d1216]"><Icon size={23} aria-hidden="true" /></div><h2 className="font-heading text-lg font-semibold text-[#8d1216]">{String(value.name || '')}</h2><p className="mt-2 flex-1 text-sm leading-6 text-[#7c3f06]/70">{String(value.description || '')}</p><p className="mt-4 text-xs text-[#7c3f06]/55">{String(value.responseTime || '')}</p>{safeHref(value.href) && <a href={safeHref(value.href) as string} className="mt-5 inline-flex items-center justify-between rounded-xl bg-[#8d1216] px-4 py-3 text-sm font-semibold text-white">{String(value.ctaLabel || 'Liên hệ')} <ArrowRight size={15} aria-hidden="true" /></a>}</article> })}</section>
+  if (section.blockType === 'support_topics') return <section className="mx-auto max-w-7xl px-5 py-12"><div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">{(Array.isArray(payload.items) ? payload.items : []).map((item, index) => { const value = item as Record<string, unknown>; const Icon = contactIcon(value.iconKey); return <article className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm" key={index}><div className="grid size-11 place-items-center rounded-2xl bg-[#fdf2e3] text-[#8d1216]"><Icon size={21} aria-hidden="true" /></div><h2 className="mt-4 font-heading text-base font-semibold text-gray-900">{String(value.title || '')}</h2><p className="mt-2 text-sm leading-6 text-gray-600">{String(value.body || '')}</p></article> })}</div></section>
+  if (section.blockType === 'office_locations') return <section className="mx-auto grid max-w-5xl gap-4 px-5 py-12 md:grid-cols-3">{(Array.isArray(payload.items) ? payload.items : []).map((item, index) => { const value = item as Record<string, unknown>; return <article className={`rounded-2xl border bg-white p-5 shadow-sm ${value.isHQ ? 'border-[#d9a441]/45 ring-1 ring-[#d9a441]/15' : 'border-gray-100'}`} key={index}><div className="flex items-center gap-2"><Building2 size={18} className="text-[#8d1216]" aria-hidden="true" /><h2 className="font-heading text-sm font-semibold text-gray-900">{String(value.city || '')}</h2></div><p className="mt-3 text-xs leading-5 text-gray-600">{String(value.address || '')}</p><p className="mt-2 text-xs text-gray-500">{String(value.hours || '')}</p><p className="mt-2 text-xs font-semibold text-[#8d1216]">{String(value.phone || '')}</p></article> })}</section>
+  if (section.blockType === 'contact_faq') return <section className="mx-auto max-w-4xl px-5 py-12"><div className="grid gap-3">{(Array.isArray(payload.items) ? payload.items : []).map((item, index) => { const value = item as Record<string, unknown>; return <details key={index} className="rounded-2xl border border-[#d9a441]/20 bg-white px-5 py-4"><summary className="cursor-pointer font-semibold text-[#7c3f06]">{String(value.question || '')}</summary><p className="mt-3 text-sm leading-6 text-[#7c3f06]/70">{String(value.answer || '')}</p></details> })}</div></section>
   if (section.blockType === 'contact_info') return <section className="mx-auto grid max-w-5xl gap-4 px-5 py-12 sm:grid-cols-3"><div className="rounded-2xl border border-[#d9a441]/20 bg-white p-5"><Phone size={19} className="text-[#8d1216]" aria-hidden="true" /><p className="mt-3 text-sm text-[#7c3f06]">{String(payload.phone || '')}</p></div><div className="rounded-2xl border border-[#d9a441]/20 bg-white p-5"><Heart size={19} className="text-[#8d1216]" aria-hidden="true" /><p className="mt-3 text-sm text-[#7c3f06]">{String(payload.email || '')}</p></div><div className="rounded-2xl border border-[#d9a441]/20 bg-white p-5"><MapPin size={19} className="text-[#8d1216]" aria-hidden="true" /><p className="mt-3 text-sm text-[#7c3f06]">{String(payload.address || '')}</p></div></section>
   return null
+}
+
+export function ContentPreview({ title, sections }: { title: string; sections: ContentSection[] }) {
+  return (
+    <div className="admin-preview-site">
+      <div className="admin-preview-site-header">
+        <span className="admin-preview-logo">Dearlove</span>
+        <span>Draft preview</span>
+      </div>
+      <div className="admin-preview-site-body">
+        <div className="mx-auto max-w-6xl px-5 pt-8">
+          <p className="eyebrow">{title}</p>
+        </div>
+        {sections.length > 0 ? sections.map(section => <PublishedBlock key={section.stableKey} section={section} />) : <div className="admin-preview-empty">Trang này chưa có section.</div>}
+      </div>
+    </div>
+  )
 }
 
 export function PublishedHomeContent({ fallback }: { fallback: ReactNode }) {

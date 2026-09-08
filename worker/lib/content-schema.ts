@@ -8,6 +8,10 @@ export const BLOCK_TYPES = [
   'feature_grid',
   'footer_links',
   'contact_info',
+  'contact_channels',
+  'support_topics',
+  'office_locations',
+  'contact_faq',
   'seo_defaults',
 ] as const
 
@@ -37,6 +41,13 @@ const STRING_LIMITS: Record<string, number> = {
   quote: 1000,
   question: 300,
   answer: 1200,
+  iconKey: 40,
+  city: 120,
+  address: 300,
+  hours: 120,
+  phone: 80,
+  ctaLabel: 120,
+  responseTime: 160,
 }
 
 function validText(value: unknown, max: number): value is string {
@@ -46,11 +57,21 @@ function validText(value: unknown, max: number): value is string {
 function validHref(value: unknown): boolean {
   if (value === undefined || value === null || value === '') return true
   if (!validText(value, STRING_LIMITS.href)) return false
-  return (value as string).startsWith('/') && !(value as string).startsWith('//') || /^https:\/\/([a-z0-9-]+\.)*dearlove\.click(?:\/|$)/i.test(value as string)
+  return (value as string).startsWith('/') && !(value as string).startsWith('//') || /^(?:https:\/\/|mailto:|tel:)/i.test(value as string)
 }
 
 function validImageAsset(value: unknown): boolean {
   return value === undefined || value === null || value === '' || typeof value === 'string' && /^[a-zA-Z0-9_-]{10,128}$/.test(value)
+}
+
+const CONTACT_ICON_KEYS = ['facebook', 'message', 'mail', 'phone', 'help', 'briefcase', 'megaphone', 'shield', 'building'] as const
+
+function validIconKey(value: unknown): value is string {
+  return value === undefined || value === null || value === '' || typeof value === 'string' && CONTACT_ICON_KEYS.includes(value as typeof CONTACT_ICON_KEYS[number])
+}
+
+function validItems(value: unknown, max: number, validator: (item: Record<string, unknown>) => boolean): boolean {
+  return Array.isArray(value) && value.length <= max && value.every(item => item && typeof item === 'object' && !Array.isArray(item) && validator(item as Record<string, unknown>))
 }
 
 function validatePayload(type: BlockType, payload: unknown): payload is Record<string, unknown> {
@@ -72,6 +93,14 @@ function validatePayload(type: BlockType, payload: unknown): payload is Record<s
       return Array.isArray(data.items) && data.items.length <= 12 && data.items.every(item => item && typeof item === 'object' && validText((item as Record<string, unknown>).title, STRING_LIMITS.title) && validText((item as Record<string, unknown>).description, STRING_LIMITS.description))
     case 'footer_links':
       return Array.isArray(data.items) && data.items.length <= 30 && data.items.every(item => item && typeof item === 'object' && validText((item as Record<string, unknown>).label, STRING_LIMITS.label) && validHref((item as Record<string, unknown>).href))
+    case 'contact_channels':
+      return validItems(data.items, 12, item => validText(item.name, 160) && validText(item.description, STRING_LIMITS.description) && validText(item.ctaLabel, STRING_LIMITS.ctaLabel) && validHref(item.href) && validText(item.responseTime, STRING_LIMITS.responseTime) && validIconKey(item.iconKey))
+    case 'support_topics':
+      return validItems(data.items, 12, item => validText(item.title, STRING_LIMITS.title) && validText(item.body, STRING_LIMITS.description) && validIconKey(item.iconKey))
+    case 'office_locations':
+      return validItems(data.items, 12, item => validText(item.city, STRING_LIMITS.city) && validText(item.address, STRING_LIMITS.address) && validText(item.hours, STRING_LIMITS.hours) && validText(item.phone, STRING_LIMITS.phone) && (item.isHQ === undefined || typeof item.isHQ === 'boolean'))
+    case 'contact_faq':
+      return validItems(data.items, 30, item => validText(item.question, STRING_LIMITS.question) && validText(item.answer, STRING_LIMITS.answer))
     case 'contact_info':
       return validText(data.phone ?? '', 80) && validText(data.email ?? '', 320) && validText(data.address ?? '', 300) && validHref(data.mapHref)
     case 'seo_defaults':
