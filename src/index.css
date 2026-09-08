@@ -138,6 +138,42 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .landing-home #why-choose .space-y-7 { row-gap: 3.5rem; }
 }
 
+.faq-list > [data-orientation='vertical'] { display: grid; gap: 1.5rem; }
+.faq-list > [data-orientation='vertical'] > .faq-item { margin: 0; }
+
+@media (max-width: 640px) {
+  .faq-list > [data-orientation='vertical'] { gap: 1rem; }
+}
+
+.faq-list { perspective: 1200px; }
+.faq-item { position: relative; transform: translateZ(0); transform-style: preserve-3d; transition: transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .35s ease, border-color .35s ease; will-change: transform; }
+.faq-item::before { position: absolute; inset: 0 auto 0 0; width: 4px; border-radius: 999px; background: linear-gradient(180deg, #f7c948, #8d1216); content: ''; opacity: 0; transform: scaleY(.35); transform-origin: center; transition: opacity .35s ease, transform .35s ease; }
+.faq-item:hover { transform: translateY(-4px) rotateX(1deg) rotateY(-.7deg); box-shadow: 0 22px 45px rgba(124, 63, 6, .12); }
+.faq-item[data-state='open'] { border-color: rgba(217, 164, 65, .55); transform: translateY(-2px); box-shadow: 0 18px 40px rgba(124, 63, 6, .11); }
+.faq-item[data-state='open']::before { opacity: 1; transform: scaleY(1); }
+.faq-trigger { transform: translateZ(18px); }
+.faq-trigger svg { transition: transform .35s cubic-bezier(.22, 1, .36, 1), color .25s ease; }
+.faq-trigger[data-state='open'] svg { transform: rotate(180deg); }
+.faq-content[data-state='open'] { animation: faq-content-open .42s cubic-bezier(.22, 1, .36, 1); }
+.faq-content[data-state='closed'] { animation: faq-content-close .25s ease both; }
+@keyframes faq-content-open { from { opacity: 0; transform: translateY(-10px) translateZ(8px); } to { opacity: 1; transform: translateY(0) translateZ(8px); } }
+@keyframes faq-content-close { from { opacity: 1; transform: translateY(0) translateZ(8px); } to { opacity: 0; transform: translateY(-6px) translateZ(8px); } }
+
+@media (max-width: 640px) {
+  .faq-list { margin-top: 2.75rem; }
+  .faq-item { border-radius: 1.25rem; }
+  .faq-trigger { gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-item,
+  .faq-item::before,
+  .faq-trigger,
+  .faq-trigger svg,
+  .faq-content { animation: none; transition: none; transform: none; }
+}
+
+
 
 /* Smooth shadow utilities */
 .shadow-soft { box-shadow: 0 8px 30px rgba(124, 63, 6, .08); }
