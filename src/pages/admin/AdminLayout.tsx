@@ -25,7 +25,6 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin', label: 'Tổng quan', icon: LayoutDashboard, end: true },
       { to: '/admin/orders', label: 'Đơn hàng', icon: ClipboardList },
-      { to: '/admin/contacts', label: 'Liên hệ', icon: Mail },
     ],
   },
   {

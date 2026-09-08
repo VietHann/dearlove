@@ -677,6 +677,14 @@
   .admin-preview-dialog { transition: none; }
 }
 
+.admin-settings-summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; list-style: none; }
+.admin-settings-summary::-webkit-details-marker { display: none; }
+.admin-settings-summary strong,
+.admin-settings-summary small { display: block; }
+.admin-settings-summary strong { color: #111827; font-size: .75rem; }
+.admin-settings-summary small { margin-top: 3px; color: #64748b; font-size: .62rem; }
+.admin-settings-box[open] .admin-settings-summary { margin-bottom: 14px; }
+
 .admin-content-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; color: #64748b; font-size: .7rem; }
 .admin-content-shortcuts span { font-weight: 700; }
 .admin-content-shortcuts a { border: 1px solid #e5e7eb; border-radius: 999px; background: #fff; padding: 7px 11px; color: #8d1216; font-weight: 700; text-decoration: none; }
