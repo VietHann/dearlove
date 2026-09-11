@@ -13,8 +13,10 @@ Thay phần hero chia hai cột và marquee ảnh bằng một hero toàn màn h
 - Video dùng `autoplay`, `muted`, `loop`, `playsInline`, `preload="metadata"` và phủ kín bằng `object-fit: cover`.
 - Overlay gradient kem/tối giúp headline và CTA đọc rõ trên các khung hình khác nhau.
 - Nội dung căn giữa theo cả hai trục, gồm một headline lớn, mô tả ngắn và duy nhất một CTA chính dẫn đến `#templatesSection`.
-- Mũi tên ở cuối hero là liên kết tới `#problems`, có nhãn hỗ trợ trình đọc màn hình và chuyển động nhẹ.
-- Khi `prefers-reduced-motion: reduce` được bật, không phát video và hiển thị ảnh tĩnh `/images/wedding-1.jpg`.
+- Mũi tên ở cuối hero là liên kết tới `#problems`, có nhãn hỗ trợ trình đọc màn hình và chỉ animate icon con để không làm thay đổi transform căn giữa của chính link.
+- Header khi cuộn dùng lớp liquid glass: nền bán trong suốt, `backdrop-filter` blur/saturate, viền sáng, inner highlight và shadow; nội dung navigation nằm trên lớp hiệu ứng.
+- Video luôn được render và phát muted/loop trên mọi viewport, kể cả khi người dùng bật `prefers-reduced-motion`, vì đây là yêu cầu hình ảnh bắt buộc của hero.
+- Nếu video không tải được, hero vẫn giữ nền màu và nội dung; không tự thay thế bằng ảnh tĩnh để tránh tạo hành vi khác nhau giữa các hệ điều hành.
 
 ## Phạm vi mã nguồn
 

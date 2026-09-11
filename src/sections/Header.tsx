@@ -87,7 +87,7 @@ export function Header() {
         transition={{ type: 'spring', stiffness: 320, damping: 32 }}
         className={`pointer-events-auto mx-auto flex items-center justify-between px-5 sm:px-8 lg:px-12 ${
           scrolled
-            ? 'border border-[#d9a441]/25 bg-[#fcfbf8]/95 shadow-lg shadow-[#8d1216]/5 backdrop-blur-xl'
+            ? 'liquid-glass'
             : ''
         }`}
       >

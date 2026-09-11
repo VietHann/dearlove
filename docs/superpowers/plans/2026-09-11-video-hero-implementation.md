@@ -4,7 +4,7 @@
 
 **Goal:** Thay hero cũ bằng video nền full hero, nội dung căn giữa, một CTA chính và fallback ảnh khi giảm chuyển động.
 
-**Architecture:** Cô lập thay đổi trong `src/sections/HeroSection.tsx`. Component dùng `matchMedia` để chọn giữa video nền và ảnh tĩnh, giữ hero trong document flow bên dưới sticky header, không đổi route hoặc section khác.
+**Architecture:** Cô lập thay đổi trong `src/sections/HeroSection.tsx`. Component luôn render video nền muted/loop cho mọi viewport và gọi `play()` khi video sẵn sàng; hero vẫn nằm trong document flow bên dưới sticky header, không đổi route hoặc section khác.
 
 **Tech Stack:** React 18, TypeScript, Tailwind CSS, Lucide React, Vite static assets.
 
@@ -13,7 +13,7 @@
 - Dùng video runtime path `/videos/backset.mp4` từ asset `public/videos/backset.mp4`.
 - Xóa marquee và bố cục hai cột khỏi hero.
 - Chỉ giữ một CTA chính dẫn đến `#templatesSection`.
-- Tôn trọng `prefers-reduced-motion` bằng ảnh tĩnh và không phát video.
+- Video luôn được render và cố gắng phát muted/loop trên mọi hệ điều hành, kể cả khi người dùng bật `prefers-reduced-motion`; không dùng ảnh fallback.
 - Video trang trí có `aria-hidden="true"`; icon mũi tên có nhãn truy cập được.
 - Không tạo tệp kiểm thử riêng theo quy ước project.
 
@@ -32,9 +32,9 @@
 
 Kiểm tra asset tại `/Users/admin/Desktop/dearlove/public/videos/backset.mp4` và xác nhận `HeroSection` hiện đang render `Marquee`, checklist và hai CTA. Không thay đổi `App.tsx`.
 
-- [ ] **Step 2: Tạo trạng thái reduced motion**
+- [ ] **Step 2: Render video bắt buộc và gọi play khi sẵn sàng**
 
-Trong component, dùng `useEffect` và `useState` để đọc `window.matchMedia('(prefers-reduced-motion: reduce)')`. Theo dõi sự kiện `change`, cleanup listener khi unmount. Giá trị mặc định trên SSR/client đầu tiên là `false`, sau đó cập nhật theo media query.
+Luôn render một phần tử `<video>` muted/loop trên mọi hệ điều hành và viewport. Dùng `preload="metadata"` để không tải toàn bộ metadata dư thừa trước khi browser khởi tạo video, đồng thời gọi `void event.currentTarget.play()` trong `onCanPlay` để hỗ trợ các trình duyệt không tự bắt đầu playback dù video đã muted. Không thêm ảnh fallback vì yêu cầu sản phẩm là hero luôn dùng video.
 
 - [ ] **Step 3: Render video nền và overlay**
 
@@ -80,24 +80,19 @@ Giữ `isolate` và các lớp âm để overlay luôn nằm giữa video/ảnh 
 
 Headline dùng font display/italic cho từ nhấn mạnh nhưng phải giữ màu đủ tương phản trên overlay.
 
-- [ ] **Step 5: Thêm mũi tên cuộn ở cuối hero**
+- [ ] **Step 5: Giữ mũi tên cuộn ở chính giữa khi animate**
 
-Thêm link tới `#problems` ở vị trí absolute phía dưới:
+Đặt transform căn giữa trên thẻ link và chỉ đặt `motion-safe:animate-bounce` trên `ChevronDown`. Không animate trực tiếp thẻ link vì animation `transform` sẽ ghi đè `-translate-x-1/2`.
 
-```tsx
-<a href="#problems" aria-label="Cuộn xuống phần tiếp theo" className="absolute bottom-6 left-1/2 inline-flex -translate-x-1/2 flex-col items-center gap-1 text-white/85 transition hover:text-white">
-  <span className="text-[10px] font-semibold uppercase tracking-[.24em]">Cuộn xuống</span>
-  <ChevronDown size={20} aria-hidden="true" className="animate-bounce" />
-</a>
-```
+- [ ] **Step 6: Thêm liquid glass cho pill header**
 
-Chuyển động mũi tên chỉ mang tính định hướng và được vô hiệu hóa bởi rule reduced-motion toàn cục hiện có.
+Trong `src/sections/Header.tsx`, dùng class `liquid-glass` cho trạng thái `scrolled`. Trong `src/index.css`, lớp này phải có nền alpha thấp, blur/saturate, border sáng, inner highlight và pseudo-elements không nhận pointer; các phần tử con của nav nằm trên lớp hiệu ứng với `z-index: 1`.
 
-- [ ] **Step 6: Xóa code marquee và import không còn dùng**
+- [ ] **Step 7: Xóa code marquee và import không còn dùng**
 
 Xóa hàm `Marquee`, các import icon/checklist chỉ phục vụ hero cũ (`Heart`, `Sparkles`, `Wand2`, `LayoutTemplate`, `Bell`) và `GradientButton` nếu không còn dùng. Giữ `ArrowRight`, thêm `ChevronDown`, `ScrollReveal`, `DarkButton`, `IMAGES`.
 
-- [ ] **Step 7: Chạy kiểm tra TypeScript**
+- [ ] **Step 8: Chạy kiểm tra TypeScript**
 
 ```bash
 npx tsc -b --pretty false
@@ -105,7 +100,7 @@ npx tsc -b --pretty false
 
 Expected: exit code `0`, không có lỗi type/import.
 
-- [ ] **Step 8: Commit component**
+- [ ] **Step 9: Commit component**
 
 ```bash
 git add src/sections/HeroSection.tsx
@@ -146,7 +141,7 @@ Expected: ứng dụng local mở được và request `/videos/backset.mp4` kh�
 
 - [ ] **Step 5: Kiểm tra reduced motion**
 
-Bật `prefers-reduced-motion: reduce` trong DevTools, reload trang và xác nhận video không xuất hiện/phát; ảnh fallback hiển thị, mũi tên không còn chuyển động.
+Bật `prefers-reduced-motion: reduce` trong DevTools, reload trang và xác nhận phần tử video vẫn được render và phát vì video là yêu cầu bắt buộc; chỉ chuyển động mũi tên và các animation trang trí được vô hiệu hóa bởi CSS/Framer Motion hiện có.
 
 - [ ] **Step 6: Chạy kiểm tra đầy đủ**
 
