@@ -13,6 +13,7 @@ import {
   Settings2,
   ShieldCheck,
   Users,
+  WandSparkles,
   X,
 } from 'lucide-react'
 import { authClient } from '../../lib/auth-client'
@@ -31,6 +32,7 @@ const NAV_GROUPS = [
     label: 'Nội dung',
     items: [
       { to: '/admin/content', label: 'Content Hub', icon: FileText },
+      { to: '/admin/invitation-templates', label: 'Template Studio', icon: WandSparkles },
       { to: '/admin/catalog', label: 'Catalog', icon: Boxes },
     ],
   },

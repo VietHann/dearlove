@@ -34,6 +34,7 @@ import AdminContacts from './pages/admin/AdminContacts'
 import AdminNewsletter from './pages/admin/AdminNewsletter'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminAuditLog from './pages/admin/AdminAuditLog'
+import AdminInvitationTemplates from './pages/admin/AdminInvitationTemplates'
 import CustomerOrderDetail from './pages/account/OrderDetail'
 import { PublishedHomeContent } from './pages/content/PublishedContent'
 
@@ -123,6 +124,7 @@ function App() {
           <Route path="newsletter" element={<AdminNewsletter />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="audit-log" element={<AdminAuditLog />} />
+          <Route path="invitation-templates" element={<AdminInvitationTemplates />} />
         </Route>
 
         {/* All other pages share the Layout with Header + Footer */}

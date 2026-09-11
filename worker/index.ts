@@ -16,6 +16,7 @@ import { adminContactsApi } from './modules/admin/contacts'
 import { adminNewsletterApi } from './modules/admin/newsletter'
 import { adminUsersApi } from './modules/admin/users'
 import { adminAuditApi } from './modules/admin/audit'
+import { adminInvitationTemplatesApi } from './modules/admin/invitation-templates'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -59,6 +60,7 @@ app.route('/api/v1/admin/contacts', adminContactsApi)
 app.route('/api/v1/admin/newsletter', adminNewsletterApi)
 app.route('/api/v1/admin/users', adminUsersApi)
 app.route('/api/v1/admin/audit-log', adminAuditApi)
+app.route('/api/v1/admin/invitation-templates', adminInvitationTemplatesApi)
 
 app.get('/api/health', c => {
   return c.json({
