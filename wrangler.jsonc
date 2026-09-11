@@ -6,7 +6,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "ENVIRONMENT": "production",
-    "BETTER_AUTH_URL": "https://dearlove.click"
+    "BETTER_AUTH_URL": "https://dearlove.click",
+    "INVITATION_RENDERER_URL": "https://insightful-determination-production-f2b7.up.railway.app"
   },
   "secrets": {
     "required": ["BETTER_AUTH_SECRET"]
