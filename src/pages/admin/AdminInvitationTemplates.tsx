@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FileImage, FileText, ImagePlus, Loader2, RefreshCw, Search, Send, WandSparkles } from 'lucide-react'
 import { AdminApiError } from '../../lib/admin-api'
 import {
@@ -11,10 +12,11 @@ import {
   type InvitationTemplateManifest,
   type InvitationTemplateSummary,
   type InvitationTextField,
-  type InvitationPreview,
 } from '../../lib/invitation-template-api'
 
 const MAX_PREVIEW_IMAGE_BYTES = 8 * 1024 * 1024
+const TEXT_FIELDS_PER_PAGE = 12
+const IMAGE_FIELDS_PER_PAGE = 8
 
 function fieldLabel(field: InvitationTextField | InvitationImageField): string {
   return field.label?.trim() || field.id
@@ -38,13 +40,16 @@ function formatBytes(bytes: number): string {
 }
 
 export default function AdminInvitationTemplates() {
+  const navigate = useNavigate()
   const [templates, setTemplates] = useState<InvitationTemplateSummary[]>([])
   const [query, setQuery] = useState('')
   const [selectedId, setSelectedId] = useState('')
   const [manifest, setManifest] = useState<InvitationTemplateManifest | null>(null)
   const [fields, setFields] = useState<Record<string, string>>({})
   const [files, setFiles] = useState<Record<string, File>>({})
-  const [preview, setPreview] = useState<InvitationPreview | null>(null)
+  const [activeTab, setActiveTab] = useState<'text' | 'images'>('text')
+  const [fieldQuery, setFieldQuery] = useState('')
+  const [fieldPage, setFieldPage] = useState(0)
   const [rendererAvailable, setRendererAvailable] = useState<boolean | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingSchema, setIsLoadingSchema] = useState(false)
@@ -84,7 +89,9 @@ export default function AdminInvitationTemplates() {
     setManifest(null)
     setFields({})
     setFiles({})
-    setPreview(null)
+    setActiveTab('text')
+    setFieldQuery('')
+    setFieldPage(0)
     setPreviewError('')
     getInvitationTemplateSchema(selectedId)
       .then(response => {
@@ -107,6 +114,29 @@ export default function AdminInvitationTemplates() {
     if (!normalized) return templates
     return templates.filter(template => `${template.id} ${template.name}`.toLowerCase().includes(normalized))
   }, [query, templates])
+
+  const filteredFields = useMemo(() => {
+    if (!manifest) return []
+    const normalized = fieldQuery.trim().toLowerCase()
+    if (!normalized) return activeTab === 'text' ? manifest.fields : manifest.images
+    return (activeTab === 'text' ? manifest.fields : manifest.images).filter(field => `${field.id} ${fieldLabel(field)}`.toLowerCase().includes(normalized))
+  }, [activeTab, fieldQuery, manifest])
+
+  const pageSize = activeTab === 'text' ? TEXT_FIELDS_PER_PAGE : IMAGE_FIELDS_PER_PAGE
+  const pageCount = Math.max(1, Math.ceil(filteredFields.length / pageSize))
+  const currentPage = Math.min(fieldPage, pageCount - 1)
+  const visibleFields = filteredFields.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+
+  const updateFieldSearch = (value: string) => {
+    setFieldQuery(value)
+    setFieldPage(0)
+  }
+
+  const updateActiveTab = (tab: 'text' | 'images') => {
+    setActiveTab(tab)
+    setFieldQuery('')
+    setFieldPage(0)
+  }
 
   const updateField = (fieldId: string, value: string) => {
     setFields(current => ({ ...current, [fieldId]: value }))
@@ -135,7 +165,14 @@ export default function AdminInvitationTemplates() {
       const response = selectedFiles.length > 0
         ? await previewInvitationTemplateUpload(manifest.id, fields, files)
         : await previewInvitationTemplate(manifest.id, fields)
-      setPreview(response.data)
+      try {
+        sessionStorage.setItem(`dearlove:invitation-preview:${manifest.id}`, JSON.stringify(response.data))
+      } catch {
+        // Router state still carries the preview for the current navigation.
+      }
+      navigate(`/admin/invitation-templates/${encodeURIComponent(manifest.id)}/preview`, {
+        state: { preview: response.data },
+      })
     } catch (cause) {
       if (cause instanceof AdminApiError && cause.status === 413) setPreviewError('Ảnh preview quá lớn. Hãy chọn ảnh nhỏ hơn 8 MB.')
       else setPreviewError(cause instanceof Error ? cause.message : 'Không thể tạo preview template.')
@@ -219,35 +256,61 @@ export default function AdminInvitationTemplates() {
                 </div>
                 <button type="button" className="admin-primary-button" onClick={() => void createPreview()} disabled={isPreviewing}>
                   {isPreviewing ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : <Send size={15} aria-hidden="true" />}
-                  {isPreviewing ? 'Đang render...' : 'Tạo preview'}
+                  {isPreviewing ? 'Đang render...' : 'Xem preview'}
                 </button>
               </div>
+              {previewError && <p className="admin-inline-error" role="alert">{previewError}</p>}
 
               <div className="admin-template-editor-grid">
                 <div className="admin-template-fields">
-                  <div className="admin-template-subheading"><FileText size={16} aria-hidden="true" /><h3>Nội dung text</h3></div>
-                  {manifest.fields.map(field => {
-                    const label = fieldLabel(field)
-                    const id = `invitation-field-${field.id}`
-                    return <label className="admin-template-field" key={field.id} htmlFor={id}>
-                      <span>{label}<small>{field.id} · {field.occurrences} vị trí</small></span>
-                      {isLongTextField(field) ? <textarea id={id} rows={4} value={fields[field.id] || ''} onChange={event => updateField(field.id, event.target.value)} /> : <input id={id} type={inputType(field)} value={fields[field.id] || ''} onChange={event => updateField(field.id, event.target.value)} />}
+                  <div className="admin-template-editor-tabs" role="tablist" aria-label="Nội dung template">
+                    <button type="button" role="tab" aria-selected={activeTab === 'text'} className={activeTab === 'text' ? 'is-active' : ''} onClick={() => updateActiveTab('text')}>
+                      <FileText size={15} aria-hidden="true" /> Nội dung text <span>{manifest.fields.length}</span>
+                    </button>
+                    <button type="button" role="tab" aria-selected={activeTab === 'images'} className={activeTab === 'images' ? 'is-active' : ''} onClick={() => updateActiveTab('images')}>
+                      <ImagePlus size={15} aria-hidden="true" /> Hình ảnh <span>{manifest.images.length}</span>
+                    </button>
+                  </div>
+
+                  <div className="admin-template-field-toolbar">
+                    <label className="admin-search-field">
+                      <span className="sr-only">Tìm trường {activeTab === 'text' ? 'text' : 'hình ảnh'}</span>
+                      <Search size={15} aria-hidden="true" />
+                      <input value={fieldQuery} onChange={event => updateFieldSearch(event.target.value)} placeholder={activeTab === 'text' ? 'Tìm theo label hoặc field ID...' : 'Tìm theo label hoặc image ID...'} />
                     </label>
-                  })}
+                    <span className="admin-template-field-count">{filteredFields.length} trường</span>
+                  </div>
 
-                  {manifest.images.length > 0 && <div className="admin-template-image-section"><div className="admin-template-subheading"><ImagePlus size={16} aria-hidden="true" /><h3>Ảnh trong template</h3></div>{manifest.images.map(field => {
-                    const label = fieldLabel(field)
-                    const id = `invitation-image-${field.id}`
-                    const file = files[field.id]
-                    return <label className="admin-template-file-field" key={field.id} htmlFor={id}><span><strong>{label}</strong><small>{field.id} · {field.strategy || 'image'}</small></span><input id={id} type="file" accept="image/*" onChange={event => updateFile(field.id, event.target.files?.[0])} />{file && <em><FileImage size={14} aria-hidden="true" /> {file.name} · {formatBytes(file.size)}</em>}</label>
-                  })}</div>}
-                </div>
+                  {activeTab === 'text' ? (
+                    <div className="admin-template-fields-grid">
+                      {visibleFields.map(field => {
+                        const textField = field as InvitationTextField
+                        const label = fieldLabel(textField)
+                        const id = `invitation-field-${textField.id}`
+                        return <label className="admin-template-field" key={textField.id} htmlFor={id}>
+                          <span>{label}<small>{textField.id} · {textField.occurrences} vị trí</small></span>
+                          {isLongTextField(textField) ? <textarea id={id} rows={3} value={fields[textField.id] || ''} onChange={event => updateField(textField.id, event.target.value)} /> : <input id={id} type={inputType(textField)} value={fields[textField.id] || ''} onChange={event => updateField(textField.id, event.target.value)} />}
+                        </label>
+                      })}
+                    </div>
+                  ) : (
+                    <div className="admin-template-images-grid">
+                      {visibleFields.map(field => {
+                        const imageField = field as InvitationImageField
+                        const label = fieldLabel(imageField)
+                        const id = `invitation-image-${imageField.id}`
+                        const file = files[imageField.id]
+                        return <label className="admin-template-file-field" key={imageField.id} htmlFor={id}>
+                          <span><strong>{label}</strong><small>{imageField.id} · {imageField.strategy || 'image'}</small></span>
+                          <input id={id} type="file" accept="image/*" onChange={event => updateFile(imageField.id, event.target.files?.[0])} />
+                          {file && <em><FileImage size={14} aria-hidden="true" /> {file.name} · {formatBytes(file.size)}</em>}
+                        </label>
+                      })}
+                    </div>
+                  )}
 
-                <div className="admin-template-preview-panel">
-                  <div className="admin-template-subheading"><WandSparkles size={16} aria-hidden="true" /><h3>Preview nội bộ</h3></div>
-                  {previewError && <p className="admin-inline-error" role="alert">{previewError}</p>}
-                  {preview?.warnings.length ? <div className="admin-template-warning" role="status">{preview.warnings.join(' ')}</div> : null}
-                  {preview ? <iframe title={`Bản xem trước mẫu ${manifest.id}`} sandbox="" srcDoc={preview.html} className="admin-template-preview-frame" /> : <div className="admin-template-preview-empty"><WandSparkles size={28} aria-hidden="true" /><strong>Chưa có preview</strong><span>Điền nội dung rồi chọn “Tạo preview”.</span></div>}
+                  {visibleFields.length === 0 && <div className="admin-template-fields-empty">Không tìm thấy trường phù hợp.</div>}
+                  {pageCount > 1 && <div className="admin-template-pagination"><button type="button" className="admin-secondary-button" onClick={() => setFieldPage(currentPage - 1)} disabled={currentPage === 0}>Trước</button><span>Trang {currentPage + 1} / {pageCount}</span><button type="button" className="admin-secondary-button" onClick={() => setFieldPage(currentPage + 1)} disabled={currentPage === pageCount - 1}>Sau</button></div>}
                 </div>
               </div>
             </> : <div className="admin-template-workspace-state"><WandSparkles size={22} aria-hidden="true" /> Chọn một mẫu để bắt đầu.</div>}
