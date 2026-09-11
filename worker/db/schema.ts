@@ -178,6 +178,46 @@ export const templateScreenshots = sqliteTable('template_screenshots', {
   templateVariant: index('idx_template_screenshots_template_variant').on(table.templateId, table.variant, table.position),
 }))
 
+export const requestDeduplication = sqliteTable('request_deduplication', {
+  id: text('id').primaryKey(),
+  scope: text('scope').notNull(),
+  requestKey: text('request_key').notNull(),
+  responseJson: text('response_json').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, table => ({
+  scopeKeyUnique: uniqueIndex('uq_request_deduplication_scope_key').on(table.scope, table.requestKey),
+  created: index('idx_request_deduplication_created').on(table.createdAt),
+}))
+
+export const blogCategories = sqliteTable('blog_categories', {
+  id: text('id').primaryKey(),
+  slug: text('slug').notNull(),
+  name: text('name').notNull(),
+  ...timestamps,
+}, table => ({
+  slugUnique: uniqueIndex('uq_blog_categories_slug').on(table.slug),
+}))
+
+export const blogPosts = sqliteTable('blog_posts', {
+  id: text('id').primaryKey(),
+  slug: text('slug').notNull(),
+  title: text('title').notNull(),
+  excerpt: text('excerpt'),
+  contentJson: text('content_json').notNull(),
+  categoryId: text('category_id').references(() => blogCategories.id),
+  authorId: text('author_id').notNull().references(() => users.id),
+  coverAssetId: text('cover_asset_id').references(() => mediaAssets.id),
+  status: text('status', { enum: ['draft', 'published', 'archived'] }).notNull().default('draft'),
+  publishedAt: integer('published_at', { mode: 'timestamp_ms' }),
+  seoTitle: text('seo_title'),
+  seoDescription: text('seo_description'),
+  ...timestamps,
+}, table => ({
+  slugUnique: uniqueIndex('uq_blog_posts_slug').on(table.slug),
+  statusPublished: index('idx_blog_posts_status_published').on(table.status, table.publishedAt),
+  categoryStatus: index('idx_blog_posts_category_status').on(table.categoryId, table.status, table.publishedAt),
+}))
+
 export const pricingPlans = sqliteTable('pricing_plans', {
   id: text('id').primaryKey(),
   slug: text('slug').notNull(),
@@ -213,6 +253,17 @@ export const orders = sqliteTable('orders', {
   orderCodeUnique: uniqueIndex('uq_orders_order_code').on(table.orderCode),
   statusCreated: index('idx_orders_status_created').on(table.status, table.createdAt),
   customerCreated: index('idx_orders_customer_created').on(table.customerId, table.createdAt),
+}))
+
+export const orderRequests = sqliteTable('order_requests', {
+  id: text('id').primaryKey(),
+  idempotencyKey: text('idempotency_key').notNull(),
+  customerId: text('customer_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  orderId: text('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, table => ({
+  customerKeyUnique: uniqueIndex('uq_order_requests_customer_key').on(table.customerId, table.idempotencyKey),
+  created: index('idx_order_requests_created').on(table.createdAt),
 }))
 
 export const orderFormAnswers = sqliteTable('order_form_answers', {
@@ -340,6 +391,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
   orders: many(orders),
+  orderRequests: many(orderRequests),
   notifications: many(notifications),
   auditLogs: many(auditLogs),
 }))
@@ -353,6 +405,7 @@ export const templatesRelations = relations(templates, ({ one, many }) => ({
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   customer: one(users, { fields: [orders.customerId], references: [users.id] }),
   template: one(templates, { fields: [orders.templateId], references: [templates.id] }),
+  requests: many(orderRequests),
   formAnswers: many(orderFormAnswers),
   uploadGroups: many(orderUploadGroups),
   files: many(orderFiles),
@@ -374,7 +427,11 @@ export const schema = {
   templates,
   templateScreenshots,
   pricingPlans,
+  blogCategories,
+  blogPosts,
+  requestDeduplication,
   orders,
+  orderRequests,
   orderFormAnswers,
   orderUploadGroups,
   orderFiles,

@@ -24,6 +24,7 @@ export function Header() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const { data: session } = authClient.useSession()
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === 'admin'
 
   useEffect(() => {
     const updateScrolled = () => setScrolled(window.scrollY > 24)
@@ -70,7 +71,7 @@ export function Header() {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-transparent'
+          ? 'bg-transparent py-4'
           : 'border-b border-[#d9a441]/20 bg-[#fcfbf8]/90 backdrop-blur-xl'
       }`}
     >
@@ -79,14 +80,14 @@ export function Header() {
         animate={{
           maxWidth: scrolled ? 1180 : 1440,
           height: scrolled ? 64 : 88,
-          marginTop: scrolled ? 12 : 0,
-          marginBottom: scrolled ? 12 : 0,
+          marginTop: 0,
+          marginBottom: 0,
           borderRadius: scrolled ? 9999 : 0,
         }}
         transition={{ type: 'spring', stiffness: 320, damping: 32 }}
         className={`pointer-events-auto mx-auto flex items-center justify-between px-5 sm:px-8 lg:px-12 ${
           scrolled
-            ? 'border border-[#d9a441]/25 bg-[#fcfbf8]/95 shadow-lg shadow-[#8d1216]/5 backdrop-blur-xl'
+            ? 'liquid-glass'
             : ''
         }`}
       >
@@ -107,9 +108,9 @@ export function Header() {
         <div className="flex items-center gap-3">
           <DarkButton className="hidden sm:inline-flex">Tạo thiệp <ArrowRight size={16}/></DarkButton>
           {session ? (
-            <GradientButton href="/account" className="hidden sm:inline-flex">
+            <GradientButton href={isAdmin ? "/admin" : "/account"} className="hidden sm:inline-flex">
               <UserRound size={16} />
-              Tài khoản
+              {isAdmin ? 'Quản trị' : 'Tài khoản'}
             </GradientButton>
           ) : (
             <GradientButton href="/auth" className="hidden sm:inline-flex">

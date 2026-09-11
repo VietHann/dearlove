@@ -2,11 +2,12 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "dearlovevip",
   "main": "./worker/index.ts",
-  "compatibility_date": "2026-09-06",
+  "compatibility_date": "2026-09-07",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "ENVIRONMENT": "production",
-    "BETTER_AUTH_URL": "https://dearlove.click"
+    "BETTER_AUTH_URL": "https://dearlove.click",
+    "INVITATION_RENDERER_URL": "https://insightful-determination-production-f2b7.up.railway.app"
   },
   "secrets": {
     "required": ["BETTER_AUTH_SECRET"]
@@ -30,6 +31,16 @@
       "database_id": "201d4c80-ce37-47d3-9b72-e4be3c05d068",
       "preview_database_id": "dearlove-local",
       "migrations_dir": "./migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PUBLIC_MEDIA",
+      "bucket_name": "dearlove-public-media"
+    },
+    {
+      "binding": "PRIVATE_UPLOADS",
+      "bucket_name": "dearlove-private-uploads"
     }
   ]
 }

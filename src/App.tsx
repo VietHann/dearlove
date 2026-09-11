@@ -21,7 +21,22 @@ import PlaceholderPage from './pages/PlaceholderPage'
 import { LegalPage } from './pages/LegalPage'
 import Account from './pages/account/Account'
 import OrderPage from './pages/orders/OrderPage'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminOrderDetail from './pages/admin/AdminOrderDetail'
+import AdminMedia from './pages/admin/AdminMedia'
+import AdminCatalog from './pages/admin/AdminCatalog'
+import AdminContent from './pages/admin/AdminContent'
+import AdminPricing from './pages/admin/AdminPricing'
+import AdminBlog from './pages/admin/AdminBlog'
+import AdminContacts from './pages/admin/AdminContacts'
+import AdminNewsletter from './pages/admin/AdminNewsletter'
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminAuditLog from './pages/admin/AdminAuditLog'
+import AdminInvitationTemplates from './pages/admin/AdminInvitationTemplates'
+import CustomerOrderDetail from './pages/account/OrderDetail'
+import { PublishedHomeContent } from './pages/content/PublishedContent'
 
 /**
  * Shared layout — used by most pages so the Header / Footer / global
@@ -54,9 +69,9 @@ function Layout() {
 }
 
 function HomePage() {
-  return (
+  const fallback = (
     <>
-      <main className="relative">
+      <main className="relative landing-home">
         <ParallaxPetals />
 
         <HeroSection />
@@ -71,6 +86,8 @@ function HomePage() {
       </main>
     </>
   )
+
+  return <PublishedHomeContent fallback={fallback} />
 }
 
 /**
@@ -92,6 +109,24 @@ function App() {
         {/* Auth page — full-screen split layout, no Header/Footer */}
         <Route path="/auth" element={<Auth />} />
 
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="orders/:orderId" element={<AdminOrderDetail />} />
+          <Route path="media" element={<AdminMedia />} />
+          <Route path="catalog" element={<AdminCatalog />} />
+          <Route path="catalog/templates" element={<AdminCatalog />} />
+          <Route path="catalog/categories" element={<AdminCatalog />} />
+          <Route path="content" element={<AdminContent />} />
+          <Route path="pricing" element={<AdminPricing />} />
+          <Route path="blog" element={<AdminBlog />} />
+          <Route path="contacts" element={<AdminContacts />} />
+          <Route path="newsletter" element={<AdminNewsletter />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="audit-log" element={<AdminAuditLog />} />
+          <Route path="invitation-templates" element={<AdminInvitationTemplates />} />
+        </Route>
+
         {/* All other pages share the Layout with Header + Footer */}
         <Route element={<Layout />}>
           <Route
@@ -109,8 +144,8 @@ function App() {
           <Route path="/terms" element={<LegalPage kind="terms" />} />
           <Route path="/privacy" element={<LegalPage kind="privacy" />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/account/orders/:orderId" element={<CustomerOrderDetail />} />
           <Route path="/order/:templateId" element={<OrderPage />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
           {/* Catch-all: send unknown routes to a friendly placeholder */}
           <Route path="*" element={<PlaceholderPage />} />
         </Route>

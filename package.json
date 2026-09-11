@@ -7,9 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test": "npm run cf:check",
     "preview": "vite preview",
     "cf:typegen": "wrangler types",
-    "cf:check": "npm run build && wrangler deploy --dry-run",
+    "cf:check": "npm run build && npx drizzle-kit check && npx wrangler types --check && npx wrangler deploy --dry-run",
     "cf:deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {

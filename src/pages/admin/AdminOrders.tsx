@@ -1,69 +1,178 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { authClient } from '../../lib/auth-client'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { ArrowUpRight, ChevronDown, ClipboardList, RefreshCw, Search, SlidersHorizontal, X } from 'lucide-react'
+import { adminApi, AdminApiError } from '../../lib/admin-api'
+import {
+  formatAdminDate,
+  ORDER_STATUS_LABELS,
+  PAYMENT_STATUS_LABELS,
+  paymentLabel,
+  statusLabel,
+  STATUS_TONE_CLASSES,
+} from './order-utils'
 
 interface AdminOrder {
   id: string
-  order_code: string
-  customer_id: string
-  template_id: string
+  orderCode: string
+  customerName: string
+  customerEmail: string
+  customerPhone: string
+  templateName: string | null
   status: string
-  payment_status: string
-  event_date: string | null
-  created_at: number
+  paymentStatus: string
+  eventDate: string | null
+  requestedDeadline: string | null
+  createdAt: number
+  updatedAt: number
+  assignedAdminName: string | null
 }
 
+interface AdminOrderResponse {
+  data: {
+    items: AdminOrder[]
+    nextCursor: string | null
+  }
+}
+
+function StatusBadge({ status }: { status: string }) {
+  return <span className={`admin-status-badge ${STATUS_TONE_CLASSES[status] || 'admin-tone-neutral'}`}>{statusLabel(status)}</span>
+}
+
+function PaymentBadge({ status }: { status: string }) {
+  return <span className="admin-payment-badge"><span aria-hidden="true" />{paymentLabel(status)}</span>
+}
+
+const ORDER_FILTERS = Object.entries(ORDER_STATUS_LABELS)
+const PAYMENT_FILTERS = Object.entries(PAYMENT_STATUS_LABELS)
+
 export default function AdminOrders() {
-  const navigate = useNavigate()
-  const { data: session, isPending } = authClient.useSession()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchInput, setSearchInput] = useState(searchParams.get('q') || '')
   const [orders, setOrders] = useState<AdminOrder[]>([])
-  const [status, setStatus] = useState('')
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
+  const requestRef = useRef<AbortController | null>(null)
+  const filterKey = searchParams.toString()
 
-  useEffect(() => {
-    if (!isPending && (!session || (session.user as { role?: string }).role !== 'admin')) {
-      navigate('/auth?mode=login&returnTo=/admin/orders', { replace: true })
+  const currentFilters = useMemo(() => ({
+    q: searchParams.get('q') || '',
+    status: searchParams.get('status') || '',
+    paymentStatus: searchParams.get('paymentStatus') || '',
+    sort: searchParams.get('sort') || 'newest',
+    from: searchParams.get('from') || '',
+    to: searchParams.get('to') || '',
+  }), [searchParams])
+
+  const loadOrders = useCallback(async (cursor?: string, append = false) => {
+    requestRef.current?.abort()
+    const controller = new AbortController()
+    requestRef.current = controller
+    if (append) setIsLoadingMore(true)
+    else setIsLoading(true)
+    setError('')
+
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(currentFilters)) if (value) params.set(key, value)
+    params.set('limit', '25')
+    if (cursor) params.set('cursor', cursor)
+
+    try {
+      const response = await adminApi<AdminOrderResponse>(`/api/v1/admin/orders?${params.toString()}`, { signal: controller.signal })
+      setOrders(current => append ? [...current, ...response.data.items] : response.data.items)
+      setNextCursor(response.data.nextCursor)
+    } catch (cause) {
+      if (cause instanceof DOMException && cause.name === 'AbortError') return
+      if (cause instanceof AdminApiError && cause.status === 401) return
+      setError(cause instanceof Error ? cause.message : 'Không thể tải hàng chờ đơn hàng.')
+      if (!append) setOrders([])
+    } finally {
+      if (!controller.signal.aborted) {
+        setIsLoading(false)
+        setIsLoadingMore(false)
+      }
     }
-  }, [isPending, navigate, session])
+  }, [currentFilters])
 
   useEffect(() => {
-    if (!session || (session.user as { role?: string }).role !== 'admin') return
-    const params = status ? `?status=${encodeURIComponent(status)}` : ''
-    fetch(`/api/v1/admin/orders${params}`, { credentials: 'include' })
-      .then(async response => {
-        const body = await response.json()
-        if (!response.ok) throw new Error(body.error?.message || 'Không thể tải đơn hàng.')
-        return body
-      })
-      .then(body => setOrders(body.data ?? []))
-      .catch(error => setError(error instanceof Error ? error.message : 'Không thể tải đơn hàng.'))
-  }, [session, status])
+    void loadOrders()
+    return () => requestRef.current?.abort()
+  }, [filterKey, loadOrders])
 
-  if (isPending || !session) {
-    return <main className="grid min-h-[70vh] place-items-center bg-background"><p className="text-sm text-[#7c3f06]/70">Đang tải...</p></main>
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const next = new URLSearchParams(searchParams)
+      const value = searchInput.trim()
+      if (value) next.set('q', value)
+      else next.delete('q')
+      if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
+    }, 300)
+    return () => window.clearTimeout(timer)
+  }, [searchInput, searchParams, setSearchParams])
+
+  const updateFilter = (key: string, value: string) => {
+    const next = new URLSearchParams(searchParams)
+    if (value) next.set(key, value)
+    else next.delete(key)
+    setSearchParams(next, { replace: true })
   }
 
+  const clearFilters = () => {
+    setSearchInput('')
+    setSearchParams({}, { replace: true })
+  }
+
+  const activeFilterCount = [currentFilters.status, currentFilters.paymentStatus, currentFilters.from, currentFilters.to].filter(Boolean).length
+
   return (
-    <main className="min-h-[70vh] bg-background px-5 py-16 sm:px-8 lg:px-12">
-      <section className="mx-auto max-w-6xl rounded-3xl border border-[#d9a441]/20 bg-white p-6 shadow-soft sm:p-10">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow">Dearlove admin</p>
-            <h1 className="mt-3 font-display text-4xl font-bold text-[#8d1216]">Quản lý đơn hàng</h1>
-          </div>
-          <label className="grid gap-1 text-xs font-semibold text-[#7c3f06]">Lọc trạng thái<select value={status} onChange={event => setStatus(event.target.value)} className="min-h-10 rounded-xl border border-[#d9a441]/30 bg-white px-3 text-sm font-normal"><option value="">Tất cả</option><option value="draft">Draft</option><option value="submitted">Submitted</option><option value="reviewing">Reviewing</option><option value="awaiting_customer">Awaiting customer</option><option value="confirmed">Confirmed</option></select></label>
+    <div className="admin-page">
+      <div className="admin-page-heading">
+        <div>
+          <p className="admin-eyebrow">Workflow / Orders</p>
+          <h1 className="admin-page-title">Đơn hàng</h1>
+          <p className="admin-page-description">Xem, phân loại và xử lý từng yêu cầu thiệp từ một hàng chờ duy nhất.</p>
         </div>
-        {error && <p className="mt-6 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
-        <div className="mt-8 overflow-x-auto">
-          <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-            <thead><tr className="border-b border-[#d9a441]/20 text-xs uppercase tracking-wide text-[#7c3f06]/60"><th className="px-3 py-3">Mã đơn</th><th className="px-3 py-3">Khách hàng</th><th className="px-3 py-3">Mẫu</th><th className="px-3 py-3">Trạng thái</th><th className="px-3 py-3">Thanh toán</th><th className="px-3 py-3">Ngày sự kiện</th></tr></thead>
-            <tbody>
-              {orders.map(order => <tr key={order.id} className="border-b border-[#d9a441]/10 text-[#7c3f06]"><td className="px-3 py-4 font-semibold text-[#8d1216]">{order.order_code}</td><td className="px-3 py-4 font-mono text-xs">{order.customer_id}</td><td className="px-3 py-4">{order.template_id}</td><td className="px-3 py-4">{order.status}</td><td className="px-3 py-4">{order.payment_status}</td><td className="px-3 py-4">{order.event_date || '—'}</td></tr>)}
-            </tbody>
-          </table>
-          {orders.length === 0 && !error && <p className="py-10 text-center text-sm text-[#7c3f06]/60">Chưa có đơn hàng.</p>}
-        </div>
+        <button type="button" className="admin-secondary-button" onClick={() => void loadOrders()} disabled={isLoading}>
+          <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} aria-hidden="true" />
+          Làm mới
+        </button>
+      </div>
+
+      <section className="admin-toolbar" aria-label="Bộ lọc đơn hàng">
+        <label className="admin-search-field">
+          <span className="sr-only">Tìm đơn hàng</span>
+          <Search size={17} aria-hidden="true" />
+          <input value={searchInput} onChange={event => setSearchInput(event.target.value)} placeholder="Tìm mã đơn, tên hoặc email..." />
+          {searchInput && <button type="button" aria-label="Xóa tìm kiếm" onClick={() => setSearchInput('')}><X size={15} aria-hidden="true" /></button>}
+        </label>
+        <button type="button" className={`admin-filter-button ${showFilters || activeFilterCount ? 'is-active' : ''}`} onClick={() => setShowFilters(value => !value)} aria-expanded={showFilters}>
+          <SlidersHorizontal size={16} aria-hidden="true" /> Bộ lọc {activeFilterCount > 0 && <span>{activeFilterCount}</span>} <ChevronDown size={14} aria-hidden="true" />
+        </button>
+        {(currentFilters.q || activeFilterCount > 0) && <button type="button" className="admin-clear-button" onClick={clearFilters}>Xóa bộ lọc</button>}
       </section>
-    </main>
+
+      {showFilters && <section className="admin-filter-panel">
+        <label className="admin-field"><span>Trạng thái đơn</span><select value={currentFilters.status} onChange={event => updateFilter('status', event.target.value)}><option value="">Tất cả trạng thái</option>{ORDER_FILTERS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+        <label className="admin-field"><span>Thanh toán</span><select value={currentFilters.paymentStatus} onChange={event => updateFilter('paymentStatus', event.target.value)}><option value="">Tất cả</option>{PAYMENT_FILTERS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+        <label className="admin-field"><span>Sắp xếp</span><select value={currentFilters.sort} onChange={event => updateFilter('sort', event.target.value)}><option value="newest">Mới nhất</option><option value="oldest">Cũ nhất</option><option value="deadline">Deadline gần nhất</option></select></label>
+        <label className="admin-field"><span>Từ ngày</span><input type="date" value={currentFilters.from} onChange={event => updateFilter('from', event.target.value)} /></label>
+        <label className="admin-field"><span>Đến ngày</span><input type="date" value={currentFilters.to} onChange={event => updateFilter('to', event.target.value)} /></label>
+      </section>}
+
+      {error && <div className="admin-alert admin-alert-error" role="alert"><strong>Không tải được đơn hàng.</strong><span>{error}</span><button type="button" onClick={() => void loadOrders()}>Thử lại</button></div>}
+
+      <section className="admin-list-panel" aria-live="polite">
+        <div className="admin-list-header"><div className="admin-list-title"><ClipboardList size={18} aria-hidden="true" /><h2>{isLoading ? 'Đang tải hàng chờ...' : `${orders.length}${nextCursor ? '+' : ''} đơn hàng`}</h2></div><span className="admin-list-meta">Cập nhật theo thời gian thực khi làm mới</span></div>
+        {isLoading ? <div className="admin-table-skeleton" aria-label="Đang tải"><span /><span /><span /><span /><span /><span /></div> : orders.length === 0 && !error ? <div className="admin-empty-state"><ClipboardList size={25} aria-hidden="true" /><strong>Chưa có đơn phù hợp</strong><p>Thử đổi bộ lọc hoặc kiểm tra lại từ khóa tìm kiếm.</p><button type="button" className="admin-secondary-button" onClick={clearFilters}>Xem tất cả đơn</button></div> : <>
+          <div className="admin-table-scroll">
+            <table className="admin-data-table"><caption className="sr-only">Danh sách đơn hàng Dearlove</caption><thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Mẫu thiệp</th><th>Trạng thái</th><th>Thanh toán</th><th>Deadline</th><th>Tạo lúc</th><th><span className="sr-only">Mở</span></th></tr></thead><tbody>{orders.map(order => <tr key={order.id}><td><Link className="admin-order-code" to={`/admin/orders/${order.id}`}>{order.orderCode}</Link></td><td><div className="admin-table-primary">{order.customerName}</div><div className="admin-table-secondary">{order.customerEmail || order.customerPhone || 'Chưa có liên hệ'}</div></td><td><span className="admin-table-primary">{order.templateName || 'Mẫu chưa lưu'}</span><span className="admin-table-secondary">{order.assignedAdminName ? `Phụ trách: ${order.assignedAdminName}` : 'Chưa phân công'}</span></td><td><StatusBadge status={order.status} /></td><td><PaymentBadge status={order.paymentStatus} /></td><td><span className={order.requestedDeadline && new Date(`${order.requestedDeadline}T00:00:00`).getTime() < Date.now() && !['completed', 'cancelled', 'delivered'].includes(order.status) ? 'admin-overdue' : 'admin-table-secondary'}>{formatAdminDate(order.requestedDeadline)}</span></td><td><span className="admin-table-secondary">{formatAdminDate(order.createdAt, true)}</span></td><td><Link className="admin-row-action" to={`/admin/orders/${order.id}`} aria-label={`Mở đơn ${order.orderCode}`}><ArrowUpRight size={17} aria-hidden="true" /></Link></td></tr>)}</tbody></table>
+          </div>
+          <div className="admin-mobile-order-list">{orders.map(order => <Link key={order.id} className="admin-mobile-order-card" to={`/admin/orders/${order.id}`}><div className="admin-mobile-order-top"><strong>{order.orderCode}</strong><StatusBadge status={order.status} /></div><div className="admin-table-primary">{order.customerName}</div><div className="admin-table-secondary">{order.templateName || 'Mẫu chưa lưu'}</div><div className="admin-mobile-order-bottom"><PaymentBadge status={order.paymentStatus} /><span>{formatAdminDate(order.createdAt, true)}</span><ArrowUpRight size={16} aria-hidden="true" /></div></Link>)}</div>
+          {nextCursor && <div className="admin-list-footer"><button type="button" className="admin-secondary-button" onClick={() => void loadOrders(nextCursor, true)} disabled={isLoadingMore}>{isLoadingMore ? 'Đang tải thêm...' : 'Tải thêm đơn hàng'}</button></div>}
+        </>}
+      </section>
+    </div>
   )
 }

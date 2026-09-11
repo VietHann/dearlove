@@ -12,7 +12,7 @@ export function TemplateCard({ template, onViewClick }: TemplateCardProps) {
       return
     }
 
-    window.location.assign(`/auth?mode=register&template=${encodeURIComponent(template.id)}`)
+    window.location.assign(`/auth?mode=register&returnTo=${encodeURIComponent(`/order/${template.id}`)}`)
   }
 
   return (
@@ -33,7 +33,7 @@ export function TemplateCard({ template, onViewClick }: TemplateCardProps) {
               decoding="async"
               loading="lazy"
               src={template.image}
-              title={`Xem và tùy chỉnh ${template.name} miễn phí`}
+              title={`Chọn mẫu ${template.name} cho đơn hàng`}
             />
           </div>
         </div>
@@ -57,7 +57,7 @@ export function TemplateCard({ template, onViewClick }: TemplateCardProps) {
               }}
               type="button"
             >
-              Xem mẫu
+              Chọn mẫu
             </button>
           </div>
 

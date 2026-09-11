@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { getPublicPricing, toPricingPlan } from '../../lib/marketing-api'
 import { PricingHero } from './PricingHero'
 import { PricingCards } from './PricingCards'
 import { PricingTable } from './PricingTable'
@@ -24,6 +26,14 @@ import './pricing.css'
  *   8. Floating support bubble (fixed bottom-right)
  */
 export default function Pricing() {
+  const [plans, setPlans] = useState<import('./pricingData').PricingPlan[] | null>(null)
+
+  useEffect(() => {
+    getPublicPricing().then(response => {
+      if (response.data.items.length > 0) setPlans(response.data.items.map(toPricingPlan))
+    }).catch(() => setPlans(null))
+  }, [])
+
   return (
     <div className="bg-background text-foreground">
       <main className="relative">
@@ -31,7 +41,7 @@ export default function Pricing() {
 
         <div className="m-auto max-w-7xl px-2.5 md:px-4">
           <div className="space-y-8">
-            <PricingCards />
+            <PricingCards plans={plans ?? undefined} />
             <PricingTable />
             <PricingFAQ />
             <PricingReasons />
