@@ -71,7 +71,7 @@ export function Header() {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-transparent'
+          ? 'bg-transparent py-4'
           : 'border-b border-[#d9a441]/20 bg-[#fcfbf8]/90 backdrop-blur-xl'
       }`}
     >
@@ -80,8 +80,8 @@ export function Header() {
         animate={{
           maxWidth: scrolled ? 1180 : 1440,
           height: scrolled ? 64 : 88,
-          marginTop: scrolled ? 12 : 0,
-          marginBottom: scrolled ? 12 : 0,
+          marginTop: 0,
+          marginBottom: 0,
           borderRadius: scrolled ? 9999 : 0,
         }}
         transition={{ type: 'spring', stiffness: 320, damping: 32 }}
