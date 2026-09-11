@@ -64,7 +64,7 @@ async function fetchRenderer(
     const upstreamRequest = new Request(target, {
       ...init,
       headers: rendererHeaders(env, init.headers),
-      redirect: 'error',
+      redirect: 'manual',
       signal: request.signal,
     })
     return { kind: 'response', response: await fetch(upstreamRequest) }
